@@ -1,0 +1,33 @@
+select.menu{
+	width: 100%;
+}
+
+.left{
+	text-align: left;
+}
+
+.center{
+    text-align: center;
+}
+
+.right{
+    text-align: right;
+}
+
+
+/*table*/
+th{
+	font-weight: bold;
+    padding-right:10px
+}
+td{
+	padding-right:10px
+}
+
+/*title*/
+h1{
+    font-size: 135%;
+}
+h2{
+    font-size: 125%;
+}

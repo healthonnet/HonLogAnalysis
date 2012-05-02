@@ -68,17 +68,17 @@ class DetailsController {
 	
 	
 	
-	Map googleVisualizationDataFromCount(countBy, Map options=[:]){
+	private Map googleVisualizationDataFromCount(countBy, Map options){
 		def ret =[:]
 		ret.columns  = [
 			[
 				'string',
-				options.category?:'category'
+				options?.category?:'category'
 				
 			],
 			[
 				'number',
-				options.count?:'count'
+				options?.count?:'count'
 				
 			]
 		]
@@ -92,16 +92,16 @@ class DetailsController {
 	}
 	
 	
-	Map googleVisualizationDetails(countBy, Map options=[:]){
+	private Map googleVisualizationDetails(countBy, Map options){
 		def ret =[:]
 		ret.columns  = [
 			[
 				'string',
-				options.category?:'User'
+				options?.category?:'User'
 			],
 			[
 				'string',
-				options.terms?:'Terms'
+				options?.terms?:'Terms'
 			]
 		]
 		ret.values= []

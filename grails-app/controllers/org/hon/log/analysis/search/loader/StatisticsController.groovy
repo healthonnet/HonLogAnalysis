@@ -66,16 +66,16 @@ class StatisticsController {
 
 	
 	
-	Map googleVisualizationDataFromCount(countBy, Map options=[:]){
+	private Map googleVisualizationDataFromCount(countBy, Map options){
 		def ret =[:]
 		ret.columns  = [
 			[
 				'string',
-				options.category?:'category'
+				options?.category?:'category'
 			],
 			[
 				'number',
-				options.count?:'count'
+				options?.count?:'count'
 			]
 		]
 		ret.values= []

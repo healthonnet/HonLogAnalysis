@@ -1,0 +1,53 @@
+<project name="hon-ir-lang" default="build-war">
+	<property name="grails.bin" value="${grails.home}/bin/grails"/>
+	<property name="target.war" value="target/.war"/>
+	<property name="war_filename" value="hon-log"/>
+
+	<target name="build-war">
+		<exec executable="${grails.bin}">
+			<arg value="war"/>
+		</exec>
+	</target>
+	
+	<target name="deploy-to-znverdi" depends="build-war">
+		<deploy_search_war host="znverdi" username="tomcat" catalinadir="tomcat/"/>
+	</target>
+	
+	<macrodef name="deploy_war">
+		<!-- tomcat host -->
+		<attribute name="host"/>
+		<!-- tomcat host username - ssh shall be setup that you don't need to enter password -->
+		<attribute name="username"/>
+		<!-- tomcat home -->
+		<attribute name="catalinadir"/>
+		<sequential>
+			<!-- shutdown, -force forces to wait for end of process, eventually send kill -9 -->
+			<!-- NB we must have set CATALINA_PID into bin/setenv.sh -->
+			<!-- failonerror is false because the command would fail if the process doe not run-->
+			<sshexec host="@{host}"
+                       username="@{username}"
+                       keyfile="${ssh.keyfile}"
+                       command="@{catalinadir}/bin/shutdown.sh -force"
+               	    failonerror="false"
+               />
+			<!-- to limit side effect, just remove -->
+			<sshexec host="@{host}"
+                       username="@{username}"
+                       keyfile="${ssh.keyfile}"
+                       command='rm -r @{catalinadir}/webapps/${war_filename}'
+               />
+			<!-- copy the war remote -->
+			<property name="tmp" value="@{host}"></property>
+			<scp todir="@{username}@${tmp}:@{catalinadir}/webapps/${war_filename}.war" file="${target.war}" keyfile="${ssh.keyfile}"
+					passphrase=""/>
+			<!-- and start back -->
+			<sshexec host="@{host}"
+                       username="@{username}"
+                       keyfile="${ssh.keyfile}"
+                       command="@{catalinadir}/bin/startup.sh"
+               />
+
+		</sequential>
+
+	</macrodef>	
+</project>

@@ -9,6 +9,11 @@ import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.loader.SearchLogLineLoaderAbst
 
 
+/**
+ * Analyzer for HON-style log lines.  Accepts logs in a format given by files such as znverdi.honsearch_log.20120325.
+ * @author nolan
+ *
+ */
 class HonLoaderService extends SearchLogLineLoaderAbst{
 
 	static transactional = true
@@ -28,11 +33,8 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	 */
 
 	final String source = 'hon'
-	Pattern patternQuery = ~/.*\bsearch=(.*?)&(EXACT|action=).*/
-	Pattern patternBlock= ~/<<(\w+)=(.*?)>>/
-//	Pattern patternRejectReferer = ~/.*<<referer=[^>]+\/(Selection\/|RareDiseases\/|HONselect\w*\?browse).*/
-	Pattern patternRejectReferer = ~/.*<<referer=[^>]+(Selection\w*\/|RareDiseases\/|HONselect\w*\?browse).*/
-	//Pattern patternRejectReferer = ~/.*<<referer=.*browse.*/
+	Pattern patternQuery = Pattern.compile("\bsearch=([^&]+?)&");
+	Pattern patternBlock = ~/<<(\w+)=(.*?)>>/
 	
 
 	@Override
@@ -41,23 +43,13 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 
 	@Override
 	public boolean acceptLine(String line) {
-		if(line.indexOf("engine=honSelect")<0)
-			return false
-		if(line.indexOf("search=")<0)
-			return false
-		def m = patternRejectReferer.matcher(line)
-		if(m.matches()){
-			return false
-		}
-		return true
+		return patternQuery.matcher(line).find();
 	}
 
 	Map parseQuery(String q){
 		def m = patternQuery.matcher(q)
-		if(! m.matches()){
-			return null
-		}
-		q=m[0][1]
+		m.find();
+		q=m.group(1);
 		String qStr = URLDecoder.decode(q,'UTF-8')
 		return [terms:qStr.split(/[\s,:;]+/).sort()]
 	}

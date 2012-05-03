@@ -18,6 +18,51 @@ class SearchLogLoaderController {
 				]
 	}
 
+	/**
+	 * Do a bulk upload of multiple files given a directory on the local disk.  Assumes all logs are
+	 * in HON-style format, and doesn't allow for duplicates.
+	 * 
+	 * @author nolan
+	 */
+	def bulkLoad = {
+		if (params.filedir != null) {
+			File directory = new File(params.filedir);
+			
+			if (!directory?.isDirectory()) {
+				return [output : "Directory '$params.filedir' not found."];
+			}
+			
+			int lineCount = 0;
+			int fileCount = 0;
+			Map<String,Object> displayResults = new TreeMap<String, Object>();
+			
+			// iterate through each file in the directory and analyze it
+			for (File file : directory.listFiles()) {
+				if (LoadedFile.findByFilename(file.getName())) { // already analyzed
+					displayResults.put([file.getName(), "already loaded"]);
+					continue;
+				}
+				// hard code 'hon' style logs for now
+				int currentLineCount = searchLogLoaderService.load('hon', file, [origFile:file.getName()]);
+				
+				lineCount += currentLineCount;
+				fileCount++;
+				displayResults.put([file.getName(), currentLineCount]);
+			}
+			
+			// show some meaningful display to the user
+			def displayOutput = new StringBuilder("Loaded $lineCount lines in $fileCount files.");
+			for (Map.Entry<String,Integer> entry : displayResults.entrySet()) {
+				String filename = entry.getKey();
+				String count = entry.getValue();
+				displayOutput.append("\n$filename: $count");
+			}
+			return [output : displayOutput]
+		} else {
+			return [output : null] 
+		}
+	}
+	
 	def upload = {
 		if(!params.logfile)
 			return [loaderTypes:searchLogLoaderService.loaders.keySet().sort()]

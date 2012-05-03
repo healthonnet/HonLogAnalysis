@@ -33,8 +33,9 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	 */
 
 	final String source = 'hon'
-	Pattern patternQuery = Pattern.compile("\bsearch=([^&]+?)&");
-	Pattern patternBlock = ~/<<(\w+)=(.*?)>>/
+	final Pattern patternQuery = ~/\bsearch=([^&]+?)&/
+	final Pattern patternEngine = ~/\bengine=([^&]+?)&/
+	final Pattern patternBlock = ~/<<(\w+)=(.*?)>>/
 	
 
 	@Override
@@ -47,31 +48,40 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	}
 
 	Map parseQuery(String q){
-		def m = patternQuery.matcher(q)
-		m.find();
-		q=m.group(1);
-		String qStr = URLDecoder.decode(q,'UTF-8')
-		return [terms:qStr.split(/[\s,:;]+/).sort()]
+		q = findUrlDecodedIfRegexMatches(patternQuery, q);
+		return [terms:q.split(/[\s,:;]+/).sort()]
+	}
+	
+	private String findUrlDecodedIfRegexMatches(Pattern pattern, String input) {
+		def matcher = pattern.matcher(input);
+		if (matcher.find()) {
+			return URLDecoder.decode(matcher.group(1), 'UTF-8');
+		}
+		return null;
 	}
 
 	@Override
 	public SearchLogLine parseLine(String line) {
-		Map els = line2Map(line)
+		Map myLine2Map = line2Map(line)
 		
 		DateFormat formatter = new SimpleDateFormat("[dd/MMM/yyyy:HH:mm:ss]",new Locale("en,EN"));
-		Date dt = (Date)formatter.parse(els.time.replaceAll(/\s+[\+\-]\d+/, ''));
+		Date date = (Date)formatter.parse(myLine2Map.time.replaceAll(/\s+[\+\-]\d+/, ''));
 
-		Map q = parseQuery(els.query)
-		SearchLogLine sll=new SearchLogLine(
+		String rawQuery = myLine2Map.query;
+		String engine = findUrlDecodedIfRegexMatches(patternEngine, rawQuery);
+		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery);
+		
+		Map q = parseQuery(myLine2Map.query)
+		new SearchLogLine(
 				source:source,
-				sessionId:els.usertrack,
-				userId:els.usertrack,
-				date: dt,
+				sessionId:myLine2Map.usertrack,
+				userId:myLine2Map.usertrack,
+				date: date,
 				termList:q.terms,
-				origQuery:els.query,
-				remoteIp: els.remoteIp
+				origQuery:query,
+				engine : engine,
+				remoteIp: myLine2Map.remoteIp
 				)
-		sll
 	}
 
 	/**

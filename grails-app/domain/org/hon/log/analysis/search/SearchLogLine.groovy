@@ -16,6 +16,7 @@ class SearchLogLine {
 	List<String> topics
 	String language
 	Date date
+	String engine
 	
 	static belongsTo = LoadedFile	
 	static hasMany = [terms:Term]

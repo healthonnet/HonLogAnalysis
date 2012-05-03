@@ -10,7 +10,7 @@
 	</target>
 	
 	<target name="deploy-to-znverdi" depends="build-war">
-		<deploy_search_war host="znverdi" username="tomcat" catalinadir="tomcat/"/>
+		<deploy_war host="znverdi" username="tomcat" catalinadir="tomcat/"/>
 	</target>
 	
 	<macrodef name="deploy_war">

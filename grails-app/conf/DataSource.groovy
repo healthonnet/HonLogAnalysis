@@ -13,6 +13,9 @@ environments {
 		dataSource {
 			dbCreate = "update" // one of 'create', 'create-drop','update'
 			pooled = true
+			url = "jdbc:mysql://localhost/hon_log?useUnicode=yes&characterEncoding=UTF-8"
+			username = "hon_log"
+			password = "hon_log"
 		}
 	}
 	test {
@@ -30,6 +33,9 @@ environments {
 			grails.config.locations=[
 				"file:${userHome}/${appName}-config.properties"
 			]
+			url = "jdbc:mysql://localhost/hon_log?useUnicode=yes&characterEncoding=UTF-8"
+			username = "hon_log"
+			password = "hon_log"
 		}
 	}
 }

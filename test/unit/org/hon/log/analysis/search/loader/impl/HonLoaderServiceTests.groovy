@@ -102,6 +102,12 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		checkLine('<<remoteIp=99.237.143.212>><<usertrack=99.237.143.212.1322781922269303>><<time=[02/Dec/2011:00:25:24 +0100]>><<query=?engine=honSelect&search=Crohn+Disease&action=search>><<referer=http://www.hon.ch/HONselect/RareDiseases/EN/C06.405.205.731.500.html>>')
 		checkLine('<<remoteIp=41.141.213.111>><<usertrack=41.141.213.111.1322862572791662>><<time=[02/Dec/2011:22:49:36 +0100]>><<query=?engine=honSelect&search=Glandes+bulbo-ur%C3%A9trales&EXACT=0&TYPE=1&action=search>><<referer=http://129.195.254.166/cgi-bin/HONselect_f?browse+A05.360.444.123>>')
 	}
+	
+	void test_problem_line2() {
+		def line = '<<remoteIp=189.127.148.93>><<usertrack=189.127.148.93.1322251209304264>><<time=[25/Nov/2011:21:00:14 +0100]>><<query=?search=Doen%C3%A7as+do+Sistema+End%C3%B3crino&EXACT=0&TYPE=1&action=search>><<referer=http://www.hon.ch/HONselect/Selection_pt/C19.html>>';
+		
+		service.parseLine(line)
+	}
 
 	private void checkLine(String str){
 		

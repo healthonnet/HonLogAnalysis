@@ -32,6 +32,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	 <<remoteIp=85.4.104.217>><<usertrack=->><<time=[29/Nov/2011:08:51:45 +0100]>><<query=?search=relation&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/HONselect?search>>
 	 */
 
+	
 	final String source = 'hon'
 	final Pattern patternQuery = ~/\bsearch=([^&]+?)&/
 	final Pattern patternEngine = ~/\bengine=([^&]+?)&/

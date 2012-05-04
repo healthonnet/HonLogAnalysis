@@ -15,6 +15,8 @@ class SearchLogLoaderService implements InitializingBean{
 
 	static transactional = true
 
+	final BATCH_SIZE = 750;
+	
 	/**
 	 * load all {@link SearchLogLine} from the file
 	 * @param source
@@ -39,8 +41,7 @@ class SearchLogLoaderService implements InitializingBean{
 //				sll.setTermList(sll.getTermList())
 				
 				loadedFile.addToSearchLogLines(sll)
-				n++
-				if(n%100 == 0){
+				if(++n % BATCH_SIZE == 0){
 					loadedFile.save(failOnError:true, flush:true)
 				}
 			}catch(Exception e){

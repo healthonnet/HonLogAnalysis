@@ -35,6 +35,7 @@ class SearchLogLoaderController {
 			int lineCount = 0;
 			int fileCount = 0;
 			Map<String,Object> displayResults = new TreeMap<String, Object>();
+			long startTime = System.currentTimeMillis();
 			
 			// iterate through each file in the directory and analyze it
 			for (File file : directory.listFiles()) {
@@ -50,8 +51,10 @@ class SearchLogLoaderController {
 				displayResults.put([file.getName(), currentLineCount]);
 			}
 			
+			long totalTime = System.currentTimeMillis() - startTime;
+			
 			// show some meaningful display to the user
-			def displayOutput = new StringBuilder("Loaded $lineCount lines in $fileCount files.");
+			def displayOutput = new StringBuilder("Loaded $lineCount lines in $fileCount files in $totalTime ms.");
 			for (Map.Entry<String,Integer> entry : displayResults.entrySet()) {
 				String filename = entry.getKey();
 				String count = entry.getValue();

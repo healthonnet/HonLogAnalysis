@@ -44,7 +44,9 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 
 	@Override
 	public boolean acceptLine(String line) {
-		return patternQuery.matcher(line).find();
+		// the first test distinguishes from db-style log lines,
+		// the second test tests if we can parse the query
+		return line.contains("<<usertrack=") && patternQuery.matcher(line).find();
 	}
 
 	Map parseQuery(String q){
@@ -71,13 +73,13 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		String engine = findUrlDecodedIfRegexMatches(patternEngine, rawQuery);
 		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery);
 		
-		Map q = parseQuery(myLine2Map.query)
+		Map parsedQuery = parseQuery(myLine2Map.query)
 		new SearchLogLine(
 				source:source,
 				sessionId:myLine2Map.usertrack,
 				userId:myLine2Map.usertrack,
 				date: date,
-				termList:q.terms,
+				termList:parsedQuery.terms,
 				origQuery:query,
 				engine : engine,
 				remoteIp: myLine2Map.remoteIp

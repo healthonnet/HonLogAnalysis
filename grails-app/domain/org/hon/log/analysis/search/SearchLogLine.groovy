@@ -54,6 +54,7 @@ class SearchLogLine {
 		topics nullable:true
 		language nullable:true
 		remoteIp nullable:true
+		engine nullable:true
 		origQuery(maxSize:1000)
 	}
 	

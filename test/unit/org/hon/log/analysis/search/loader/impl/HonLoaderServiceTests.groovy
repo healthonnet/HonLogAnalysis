@@ -25,14 +25,9 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		//empty search
 		assert !service.acceptLine('<<remoteIp=195.189.142.231>><<usertrack=195.189.142.231.1323565174598994>><<time=[11/Dec/2011:01:59:35 +0100]>><<query=?engine=honSelect&action=search>><<referer=->>')
 
-		//reject search from HON browsing
-		assert !service.acceptLine('<<remoteIp=82.234.160.53>><<usertrack=->><<time=[29/Nov/2011:08:45:54 +0100]>><<query=?engine=honSelect&search=Arthrogrypose&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/HONselect_f?browse+C05.651.102>>')
-		//reject search from HON selection
-		assert !service.acceptLine('<<remoteIp=82.234.160.53>><<usertrack=->><<time=[29/Nov/2011:08:45:54 +0100]>><<query=?sengine=honSelect&earch=Arthrogrypose&EXACT=0&TYPE=1&action=search>><<referer=http://www.hon.ch/HONselect/Selection_sp/C12.294.html>>')
-		//reject search from HON rare disease
-		assert !service.acceptLine('<<remoteIp=82.234.160.53>><<usertrack=->><<time=[29/Nov/2011:08:45:54 +0100]>><<query=?engine=honSelect&search=Arthrogrypose&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/RareDiseases/FR/C10.228.140.300.200.600.html>>')
+		//reject logline from db-style
+		assert !service.acceptLine('119.159.11.181 - - [03/May/2012:17:36:33 +0200] "GET /~honlogs/logger.png?engine=honSelect&search=Genitalia%2C+Female&EXACT=0&TYPE=1&action=search HTTP/1.1" 200 6133');
 		
-
 	}
 
 	void test_line2map(){
@@ -97,7 +92,7 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		assert sll
 		assert sll.terms.size() == 2
 		Term.list().each{println it}
-		assert sll.terms.collect{"$it"}.sort() == ['genitalkrankheiten', 'männliche']
+		assert sll.terms.collect{"$it"}.sort() == ['genitalkrankheiten', 'm' + ((char)0344) + 'nnliche']
 	}
 	
 	void test_problem_lines(){

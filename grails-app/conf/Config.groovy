@@ -67,7 +67,9 @@ grails.exceptionresolver.params.exclude = ['password']
 def username = System.getProperty('user.name')
 environments {
     production {
-        grails.serverURL = "http://www.changeme.com"
+				grails.config.locations=[
+					"classpath:${appName}-config.properties"
+				]
     }
     development {
         grails.serverURL = "http://localhost:8080/${appName}"

@@ -17,10 +17,13 @@
 		
 		<delete file="target/tmpdir/WEB-INF/lib/servlet-api-2.3.jar"/>
 		
+		<!-- hard-code the khresmoi properties file to go in WEB-INF/classes.
+		     TODO: have Hudson build multiple copies of the war depending on where
+		     we're deploying to -->
+		<copy file="khresmoi-config.properties" tofile="target/tmpdir/WEB-INF/classes/hon-log-config.properties"/>
+		
 		<war destfile="target/${war_filename}.war" basedir="target/tmpdir"/>
-		
 		<delete dir="target/tmpdir"/>
-		
 		
 	</target>
 	

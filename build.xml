@@ -1,12 +1,27 @@
 <project name="hon-ir-lang" default="build-war">
 	<property name="grails.bin" value="${grails.home}/bin/grails"/>
-	<property name="target.war" value="target/.war"/>
 	<property name="war_filename" value="hon-log"/>
-
+	<property name="target.war" value="target/{war_filename}.war"/>
+	
 	<target name="build-war">
 		<exec executable="${grails.bin}">
 			<arg value="war"/>
+			<arg value="target/${war_filename}.war"/>
 		</exec>
+		
+		<!-- Have to remove the annoying servlet-api.jar from the war for Tomcat
+		     TODO: this shouldn't be included by Grails in the first place... -->
+		<echo message="Removing servlet-api-2.3.jar from war file for Tomcat..."/>
+		<mkdir dir="target/tmpdir"/>
+		<unzip src="target/${war_filename}.war" dest="target/tmpdir"/>
+		
+		<delete file="target/tmpdir/WEB-INF/lib/servlet-api-2.3.jar"/>
+		
+		<war destfile="target/${war_filename}.war" basedir="target/tmpdir"/>
+		
+		<delete dir="target/tmpdir"/>
+		
+		
 	</target>
 	
 	<target name="deploy-to-znverdi" depends="build-war">

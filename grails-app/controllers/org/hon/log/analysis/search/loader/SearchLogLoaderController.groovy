@@ -39,7 +39,9 @@ class SearchLogLoaderController {
 			
 			// iterate through each file in the directory and analyze it
 			for (File file : directory.listFiles()) {
-				if (LoadedFile.findByFilename(file.getName())) { // already analyzed
+				if (file.isDirectory()) {
+					continue;
+				} else if (LoadedFile.findByFilename(file.getName())) { // already analyzed
 					displayResults.put([file.getName(), "already loaded"]);
 					continue;
 				}

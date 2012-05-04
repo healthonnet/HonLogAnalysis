@@ -3,8 +3,9 @@ package org.hon.log.analysis.search.loader
 import java.io.File;
 import java.util.Map;
 
-import org.apache.tools.ant.types.FileList.FileName;
+import org.apache.poi.hssf.record.formula.functions.T
 import org.codehaus.groovy.grails.commons.GrailsApplication;
+import org.hibernate.FlushMode
 import org.hon.log.analysis.search.LoadedFile;
 import org.hon.log.analysis.search.SearchLogLine;
 import org.springframework.beans.factory.InitializingBean;
@@ -15,7 +16,9 @@ class SearchLogLoaderService implements InitializingBean{
 
 	static transactional = true
 
-	final BATCH_SIZE = 750;
+	final BATCH_SIZE = 100;
+	
+	def sessionFactory;
 	
 	/**
 	 * load all {@link SearchLogLine} from the file
@@ -24,6 +27,9 @@ class SearchLogLoaderService implements InitializingBean{
 	 * @return the number of actually saved {@link SearchLogLine}
 	 */
 	public int load(String source, File file , options=[:]){
+		
+		//sessionFactory.currentSession.setFlushMode(FlushMode.COMMIT);
+		
 		SearchLogLineLoaderAbst service = getLoaderService(source)
 		LoadedFile loadedFile = new LoadedFile(filename: options.origFile?:file.absolutePath).save(failOnError:true)
 
@@ -42,15 +48,26 @@ class SearchLogLoaderService implements InitializingBean{
 				
 				loadedFile.addToSearchLogLines(sll)
 				if(++n % BATCH_SIZE == 0){
-					loadedFile.save(failOnError:true, flush:true)
+					saveFile(loadedFile);
 				}
 			}catch(Exception e){
 				log.error("Cannot parse $line", e)
 			}
 		}
-		loadedFile.save(failOnError:true)
+		saveFile(loadedFile)
 		
 		n
+	}
+	
+	def saveFile(loadedFile) {
+		try {
+			loadedFile.save(flush:true, failOnError:true)
+		} catch (Throwable t) {
+			t.printStackTrace();
+			LoadedFile.withSession{ session ->
+				session.clear();
+			}
+		}
 	}
 
 	/**

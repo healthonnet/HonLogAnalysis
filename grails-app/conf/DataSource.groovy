@@ -14,10 +14,11 @@ environments {
 	development {
 		dataSource {
 			dbCreate = "update" // one of 'create', 'create-drop','update'
-			pooled = true
 			url = "jdbc:mysql://localhost/hon_log?useUnicode=yes&characterEncoding=UTF-8"
 			username = "hon_log"
 			password = "hon_log"
+			dialect = 'org.hibernate.dialect.MySQL5InnoDBDialect'
+			driverClassName = "com.mysql.jdbc.Driver"
 		}
 	}
 	test {
@@ -38,6 +39,8 @@ environments {
 			url = "jdbc:mysql://localhost/hon_log?useUnicode=yes&characterEncoding=UTF-8"
 			username = "hon_log"
 			password = "hon_log"
+			dialect = 'org.hibernate.dialect.MySQL5InnoDBDialect'
+			driverClassName = "com.mysql.jdbc.Driver"
 		}
 	}
 }

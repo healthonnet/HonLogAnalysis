@@ -2,7 +2,7 @@
 	
 	<property name="grails.bin" value="${grails.home}/bin/grails"/>
 	<property name="target.war.filename" value="hon-log"/>
-	<property name="target.war" value="target/{target.war.filename}.war"/>
+	<property name="target.war" value="target/${target.war.filename}.war"/>
 	<property name="ssh.keyfile" value="${user.home}/.ssh/id_rsa"/>
 	
 	<target name="build-war">

@@ -28,7 +28,10 @@ class SearchLogLoaderService implements InitializingBean{
 	 */
 	public int load(String source, File file , options=[:]){
 		
-		//sessionFactory.currentSession.setFlushMode(FlushMode.COMMIT);
+		def simpleFilename = file.getName();
+		
+		log.info("Loading $simpleFilename...")
+		long startTime = System.currentTimeMillis()
 		
 		SearchLogLineLoaderAbst service = getLoaderService(source)
 		LoadedFile loadedFile = new LoadedFile(filename: options.origFile?:file.absolutePath).save(failOnError:true)
@@ -55,6 +58,9 @@ class SearchLogLoaderService implements InitializingBean{
 			}
 		}
 		saveFile(loadedFile)
+		
+		long totalTime = System.currentTimeMillis() - startTime
+		log.info("Loaded $n lines in $simpleFilename in $totalTime ms.")
 		
 		n
 	}

@@ -1,31 +1,33 @@
-<project name="hon-ir-lang" default="build-war">
+<project name="hon-log-analysis" default="build-war">
+	
 	<property name="grails.bin" value="${grails.home}/bin/grails"/>
-	<property name="war_filename" value="hon-log"/>
-	<property name="target.war" value="target/{war_filename}.war"/>
+	<property name="target.war.filename" value="hon-log"/>
+	<property name="target.war" value="target/{target.war.filename}.war"/>
 	
 	<target name="build-war">
+		
 		<exec executable="${grails.bin}">
 			<arg value="war"/>
-			<arg value="target/${war_filename}.war"/>
+			<arg value="target/${target.war.filename}.war"/>
 		</exec>
 		
 		<!-- Have to remove the annoying servlet-api.jar from the war for Tomcat
 		     TODO: this shouldn't be included by Grails in the first place... -->
 		<echo message="Removing servlet-api-2.3.jar from war file for Tomcat..."/>
 		<mkdir dir="target/tmpdir"/>
-		<unzip src="target/${war_filename}.war" dest="target/tmpdir"/>
+		<unzip src="target/${target.war.filename}.war" dest="target/tmpdir"/>
 		
 		<delete file="target/tmpdir/WEB-INF/lib/servlet-api-2.3.jar"/>
 		
 		<!-- hard-code the khresmoi properties file to go in WEB-INF/classes.
 		     TODO: have Hudson build multiple copies of the war depending on where
 		     we're deploying to -->
-		<copy file="khresmoi-config.properties" tofile="target/tmpdir/WEB-INF/classes/hon-log-config.properties"/>
+		<copy file="${config.file}" tofile="target/tmpdir/WEB-INF/classes/hon-log-config.properties"/>
 		
-		<war destfile="target/${war_filename}.war" basedir="target/tmpdir"/>
+		<war destfile="target/${target.war.filename}.war" basedir="target/tmpdir"/>
 		<delete dir="target/tmpdir"/>
 		
-	</target>
+	</target>	
 	
 	<target name="deploy-to-znverdi" depends="build-war">
 		<deploy_war host="znverdi" username="tomcat" catalinadir="tomcat/"/>
@@ -52,11 +54,11 @@
 			<sshexec host="@{host}"
                        username="@{username}"
                        keyfile="${ssh.keyfile}"
-                       command='rm -r @{catalinadir}/webapps/${war_filename}'
+                       command='rm -r @{catalinadir}/webapps/${target.war.filename}'
                />
 			<!-- copy the war remote -->
 			<property name="tmp" value="@{host}"></property>
-			<scp todir="@{username}@${tmp}:@{catalinadir}/webapps/${war_filename}.war" file="${target.war}" keyfile="${ssh.keyfile}"
+			<scp todir="@{username}@${tmp}:@{catalinadir}/webapps/${target.war.filename}.war" file="${target.war}" keyfile="${ssh.keyfile}"
 					passphrase=""/>
 			<!-- and start back -->
 			<sshexec host="@{host}"

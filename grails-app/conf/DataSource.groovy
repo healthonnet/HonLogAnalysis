@@ -36,9 +36,6 @@ environments {
 			grails.config.locations=[
 				"file:${userHome}/${appName}-config.properties"
 			]
-			url = "jdbc:mysql://localhost/hon_log?useUnicode=yes&characterEncoding=UTF-8"
-			username = "hon_log"
-			password = "hon_log"
 			dialect = 'org.hibernate.dialect.MySQL5InnoDBDialect'
 			driverClassName = "com.mysql.jdbc.Driver"
 		}

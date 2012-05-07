@@ -111,5 +111,6 @@ log4j = {
 
     error   'org.mortbay.log'
 	
-	info 'org.hon'
+	info 'org.hon',
+	     'com.linkedin.grails' // profiler
 }

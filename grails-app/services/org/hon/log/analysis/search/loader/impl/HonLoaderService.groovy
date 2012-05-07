@@ -37,6 +37,16 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	final Pattern patternQuery = ~/\bsearch=([^&]+?)&/
 	final Pattern patternEngine = ~/\bengine=([^&]+?)&/
 	final Pattern patternBlock = ~/<<(\w+)=(.*?)>>/
+	final Pattern patternDateCleanup = ~/\s+[\+\-]\d+/
+	
+	// DateFormat is not threadsafe
+	final ThreadLocal<DateFormat> localDateFormat = new ThreadLocal<DateFormat>(){
+		
+		protected DateFormat initialValue() {
+			return new SimpleDateFormat("[dd/MMM/yyyy:HH:mm:ss]",new Locale("en,EN"));
+		}
+	};
+	
 	
 
 	@Override
@@ -67,8 +77,8 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	public SearchLogLine parseLine(String line) {
 		Map myLine2Map = line2Map(line)
 		
-		DateFormat formatter = new SimpleDateFormat("[dd/MMM/yyyy:HH:mm:ss]",new Locale("en,EN"));
-		Date date = (Date)formatter.parse(myLine2Map.time.replaceAll(/\s+[\+\-]\d+/, ''));
+		DateFormat formatter = localDateFormat.get();
+		Date date = (Date)formatter.parse(myLine2Map.time.replaceAll(patternDateCleanup, ''));
 
 		String rawQuery = myLine2Map.query;
 		String engine = findUrlDecodedIfRegexMatches(patternEngine, rawQuery);

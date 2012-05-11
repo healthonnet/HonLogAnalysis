@@ -36,7 +36,7 @@ class SearchLogLine {
 	
 	void setTermList(List<String> ts){
 		stopWordsRemover.cleanTerms(ts).unique().each{ 
-			Term t = Term.findOrSaveWhere(value : it);
+			Term t = Term.findByValue(it)?:new Term(value:it)
 			addToTerms(t)
 		}
 		nbTerms=terms?.size()?:0

@@ -68,7 +68,7 @@ class SearchLogLoaderService implements InitializingBean{
 	
 	def saveFile(loadedFile) {
 		try {
-			loadedFile.save(failOnError:true)
+			loadedFile.save(failOnError:true, flush: true)
 		} catch (Throwable t) {
 			t.printStackTrace();
 			log.warn("Found error while processing log line", t);

@@ -47,16 +47,17 @@ class SearchLogLoaderService implements InitializingBean{
 				if(sll.origQuery.length()>=1000){
 					return
 				}
-//				sll.setTermList(sll.getTermList())
 				
 				loadedFile.addToSearchLogLines(sll)
 				if(++n % BATCH_SIZE == 0){
+					loadedFile = loadedFile.merge(); // merge to avoid duplicate Terms
 					saveFile(loadedFile);
 				}
 			}catch(Exception e){
 				log.error("Cannot parse $line", e)
 			}
 		}
+		loadedFile = loadedFile.merge(); // merge to avoid duplicate Terms
 		saveFile(loadedFile)
 		
 		long totalTime = System.currentTimeMillis() - startTime
@@ -67,15 +68,16 @@ class SearchLogLoaderService implements InitializingBean{
 	
 	def saveFile(loadedFile) {
 		try {
-			loadedFile.save(flush:true, failOnError:true)
+			loadedFile.save(failOnError:true)
 		} catch (Throwable t) {
 			t.printStackTrace();
+			log.warn("Found error while processing log line", t);
 			LoadedFile.withSession{ session ->
 				session.clear();
 			}
 		}
 	}
-
+	
 	/**
 	 * 
 	 * @param source

@@ -36,7 +36,7 @@ class SearchLogLine {
 	
 	void setTermList(List<String> ts){
 		stopWordsRemover.cleanTerms(ts).unique().each{ 
-			Term t = Term.findByValue(it)?:new Term(value:it)
+			Term t = Term.findOrSaveWhere(value : it);
 			addToTerms(t)
 		}
 		nbTerms=terms?.size()?:0
@@ -56,6 +56,12 @@ class SearchLogLine {
 		remoteIp nullable:true
 		engine nullable:true
 		origQuery(maxSize:1000)
+	}
+	
+	// disable hibernate optimistic locking - it forces a constant update of the 'version' field, which is costly
+	// plus, there's only one thread that reads from the db at once
+	static mapping = {
+		version false
 	}
 	
 	

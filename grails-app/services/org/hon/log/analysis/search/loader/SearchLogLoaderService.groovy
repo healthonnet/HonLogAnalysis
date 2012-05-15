@@ -69,6 +69,11 @@ class SearchLogLoaderService implements InitializingBean{
 	def saveFile(loadedFile) {
 		try {
 			loadedFile.save(failOnError:true, flush:true)
+			
+			// if we don't manually clear the session, we end up with a memory leak where
+			// each document takes long and longer until the JVM finaly crashes
+			sessionFactory.currentSession.flush()
+			sessionFactory.currentSession.clear()
 		} catch (Throwable t) {
 			t.printStackTrace();
 			log.warn("Found error while processing log line", t);

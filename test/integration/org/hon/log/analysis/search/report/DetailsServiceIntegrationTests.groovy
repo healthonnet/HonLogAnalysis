@@ -10,6 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 class DetailsServiceIntegrationTests extends GroovyTestCase {
 	SearchLogLoaderService searchLogLoaderService
 	DetailsService detailsService
+	def sessionFactory;
 	
     protected void setUp() {
         super.setUp()		
@@ -20,7 +21,7 @@ class DetailsServiceIntegrationTests extends GroovyTestCase {
     }
 		
 	void test_group_by_user() {
-		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.log').file)
+		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.txt').file)
 		
 			Map detByUser=detailsService.listByUser();
 			//how many users from the log file
@@ -33,27 +34,19 @@ class DetailsServiceIntegrationTests extends GroovyTestCase {
 			
 		}
 
-	@Ignore // dunno why this test is failing - Nolan
 	void test_terms_by_user() {
-		//it doesn't work from loader
-		//searchLogLoaderService.load('hon', new ClassPathResource('resources/hon-1.log').file)
-		
-		new SearchLogLine(remoteIp:'41.92.5.171', termList:['glaucoma','arthrit'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'41.92.5.171', termList:['arthrit','mycoses'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'41.104.48.75', termList:['kot'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'41.104.48.75', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'41.104.48.75', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'41.104.48.75', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
+		searchLogLoaderService.load('hon', new ClassPathResource('resources/hon-1.txt').file)
 
-		
+		assert SearchLogLine.count() == 96;
 		
 		Map detByUser=detailsService.distinctTermsByUser();
-		assert detByUser['41.92.5.171'].size() == 3
+		assert detByUser['84.49.130.205.1323558735943643'].size() == 19
 		//how many distinct users from the log file
-		assert detByUser.size() == 2
+		assert detByUser.size() == 32
 		//accessing list of terms of user, verifying a term
-		String str=detByUser['41.92.5.171'].get(2)
-		assert str=='mycoses'
+		assert detByUser['84.49.130.205.1323558735943643'][2] == 'adie'
+		assert detByUser['84.49.130.205.1323558735943643'][3] == 'angelman'
+		
 		
 	}
 	

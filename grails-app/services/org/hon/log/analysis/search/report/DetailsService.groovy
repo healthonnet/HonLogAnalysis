@@ -3,7 +3,6 @@ package org.hon.log.analysis.search.report
 import java.util.Map;
 
 import org.hon.log.analysis.search.SearchLogLine;
-import org.hon.log.analysis.search.query.Term;
 
 import org.grails.geoip.service.GeoIpService;
 import com.maxmind.geoip.Location;
@@ -221,35 +220,28 @@ class DetailsService {
 	}
 	
 
-	Map distinctTermsByUser(){
+	public Map distinctTermsByUser(){
 		Map userTerms=[:]
 		List l
 		
-		SearchLogLine.list().each{SearchLogLine sll ->
+		SearchLogLine.list().each{SearchLogLine searchLogLine ->
 			
-			if (!sll.userId || sll.userId=='-')
+			if (!searchLogLine.userId || searchLogLine.userId=='-')
 				return
 
 				
-			if(userTerms[sll.userId]==null){
-					userTerms[sll.userId]=[];		
-					
+			if(userTerms[searchLogLine.userId]==null){
+					userTerms[searchLogLine.userId]= [] as SortedSet;		
 			}
-			
-			l=sll.termList;	
-			println l
-			if(l){
-				l.each {String t->
-					if(!userTerms[sll.userId].contains(t))
-						userTerms[sll.userId]<< t;
-						
-				}
-			}
+			userTerms[searchLogLine.userId].addAll(searchLogLine.termList)
 		}
-	   
-		userTerms
-		//sortTerms(userTerms)
 		
+		// convert sets to list
+		userTerms.keySet().each { key ->
+			userTerms[key] = userTerms[key] as List
+		}
+			   
+		userTerms
 	}
 	
 	Map sortTerms(mp){

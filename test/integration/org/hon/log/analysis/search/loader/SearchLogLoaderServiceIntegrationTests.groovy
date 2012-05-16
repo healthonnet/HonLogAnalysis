@@ -29,12 +29,12 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 	}
 	
 	void test_check_loaded_files(){
-		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.log').file)
+		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.txt').file)
 		
 		List lf = LoadedFile.list();
 		assert lf.size() == 1
 		LoadedFile f = lf[0]
-		assert f.filename.endsWith('tel-1.log')
+		assert f.filename.endsWith('tel-1.txt')
 		assert f.size() == 22
 		assert f.loadedAt
 		
@@ -44,11 +44,11 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 	
 	void test_dbs_loading() {
 
-		int n = searchLogLoaderService.load('dbs', testFile('dbs-1.log'), [origFile:'dbs-1.log'])
+		int n = searchLogLoaderService.load('dbs', testFile('dbs-1.txt'), [origFile:'dbs-1.txt'])
 		assert n == 11
 		assert SearchLogLine.count() == 11
 
-		LoadedFile loadedfile =LoadedFile.findByFilename('dbs-1.log')
+		LoadedFile loadedfile =LoadedFile.findByFilename('dbs-1.txt')
 		assert loadedfile
 		assert loadedfile.size() == 11
 
@@ -58,13 +58,13 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 	}
 
 	void test_tel_loading() {
-		int n = searchLogLoaderService.load('tel', testFile('tel-1.log'))
+		int n = searchLogLoaderService.load('tel', testFile('tel-1.txt'))
 		assert n == 22
 		assert SearchLogLine.count() == 22
 	}
 	
 	void test_hon_loading() {
-		int n = searchLogLoaderService.load('hon', testFile('hon-1.log'))
+		int n = searchLogLoaderService.load('hon', testFile('hon-1.txt'))
 		assert n == 96
 		assert SearchLogLine.count() == 96
 	}
@@ -74,7 +74,7 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 		
 		// test to make sure terms aren't added more than once for the same string
 		
-		int n = searchLogLoaderService.load('hon', testFile('test_duplicates.log'))
+		int n = searchLogLoaderService.load('hon', testFile('test_duplicates.txt'))
 		
 		assert n == 2
 		assert SearchLogLine.count() == 2

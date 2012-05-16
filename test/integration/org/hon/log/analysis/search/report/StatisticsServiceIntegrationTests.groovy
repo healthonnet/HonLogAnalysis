@@ -21,7 +21,7 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 	}
 
 	void test_language_count() {
-		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.log').file)
+		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.txt').file)
 
 		Map m = statisticsService.countByLanguage();
 		assert m.size() == 3
@@ -29,7 +29,7 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 	}
 	
 	void test_query_length() {
-		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.log').file)
+		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.txt').file)
 		List m = statisticsService.countByQueryLength();
 		assert m.grep({it}).size() == 3
 		assert m[1] == 3

@@ -28,6 +28,9 @@ class SearchLogLoaderService implements InitializingBean{
 	 */
 	public int load(String source, File file , options=[:]){
 		
+		// since we're batch inserting, we'll tell hibernate when to flush
+		sessionFactory.currentSession.setFlushMode(FlushMode.MANUAL);
+		
 		def simpleFilename = file.getName();
 		
 		log.info("Loading $simpleFilename...")
@@ -50,14 +53,12 @@ class SearchLogLoaderService implements InitializingBean{
 				
 				loadedFile.addToSearchLogLines(sll)
 				if(++n % BATCH_SIZE == 0){
-					loadedFile = loadedFile.merge(); // merge to avoid duplicate Terms
 					saveFile(loadedFile);
 				}
 			}catch(Exception e){
 				log.error("Cannot parse $line", e)
 			}
 		}
-		loadedFile = loadedFile.merge(); // merge to avoid duplicate Terms
 		saveFile(loadedFile)
 		
 		long totalTime = System.currentTimeMillis() - startTime
@@ -68,18 +69,16 @@ class SearchLogLoaderService implements InitializingBean{
 	
 	def saveFile(loadedFile) {
 		try {
-			loadedFile.save(failOnError:true, flush:true)
+			loadedFile.save(failOnError:true)
 			
 			// if we don't manually clear the session, we end up with a memory leak where
-			// each document takes long and longer until the JVM finaly crashes
+			// each document takes long and longer until the JVM finally crashes
 			sessionFactory.currentSession.flush()
 			sessionFactory.currentSession.clear()
 		} catch (Throwable t) {
 			t.printStackTrace();
 			log.warn("Found error while processing log line", t);
-			LoadedFile.withSession{ session ->
-				session.clear();
-			}
+			throw new RuntimeException(t);
 		}
 	}
 	

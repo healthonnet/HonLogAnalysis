@@ -12,14 +12,13 @@ class DetailsServiceIntegrationTests extends GroovyTestCase {
 	DetailsService detailsService
 	
     protected void setUp() {
-        super.setUp()			
+        super.setUp()		
     }
 
     protected void tearDown() {
         super.tearDown()
     }
 		
-	@Ignore // dunno why this test is failing - nolan
 	void test_group_by_user() {
 		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.log').file)
 		
@@ -34,7 +33,7 @@ class DetailsServiceIntegrationTests extends GroovyTestCase {
 			
 		}
 
-	@Ignore // dunno why this test is failing - nolan
+	@Ignore // dunno why this test is failing - Nolan
 	void test_terms_by_user() {
 		//it doesn't work from loader
 		//searchLogLoaderService.load('hon', new ClassPathResource('resources/hon-1.log').file)

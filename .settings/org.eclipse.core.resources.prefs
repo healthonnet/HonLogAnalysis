@@ -37,4 +37,3 @@ encoding//grails-app/i18n/messages_ru.properties=UTF-8
 encoding//grails-app/i18n/messages_th.properties=UTF-8
 encoding//grails-app/i18n/messages_zh_CN.properties=UTF-8
 encoding//src/groovy/org/hon/log/analysis/search/StopWordRemover.groovy=UTF-8
-encoding//test/resources/tel-1.log=UTF-8

@@ -6,7 +6,7 @@ import grails.test.*
 
 import org.hon.log.analysis.search.LoadedFile
 import org.hon.log.analysis.search.SearchLogLine
-import org.junit.Ignore
+import org.hon.log.analysis.search.query.Term;
 import org.springframework.core.io.ClassPathResource
 
 class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
@@ -28,7 +28,6 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 		assert searchLogLoaderService.loaders.size() == 3
 	}
 	
-	@Ignore // dunno why this test is failing - nolan
 	void test_check_loaded_files(){
 		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.log').file)
 		
@@ -43,7 +42,6 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 		
 	}
 	
-	@Ignore // dunno why this test is failing - nolan
 	void test_dbs_loading() {
 
 		int n = searchLogLoaderService.load('dbs', testFile('dbs-1.log'), [origFile:'dbs-1.log'])
@@ -59,18 +57,32 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 		assert sll.terms.size()>0
 	}
 
-	@Ignore // dunno why this test is failing - nolan
 	void test_tel_loading() {
 		int n = searchLogLoaderService.load('tel', testFile('tel-1.log'))
 		assert n == 22
 		assert SearchLogLine.count() == 22
 	}
 	
-	@Ignore // dunno why this test is failing - nolan
 	void test_hon_loading() {
 		int n = searchLogLoaderService.load('hon', testFile('hon-1.log'))
-		assert n == 6
-		assert SearchLogLine.count() == 6
+		assert n == 96
+		assert SearchLogLine.count() == 96
+	}
+	
+	
+	void testNoDuplicateTerms() {
+		
+		// test to make sure terms aren't added more than once for the same string
+		
+		int n = searchLogLoaderService.load('hon', testFile('test_duplicates.log'))
+		
+		assert n == 2
+		assert SearchLogLine.count() == 2
+		assert Term.count() == 2
+		SearchLogLine.findAll().each() { searchLogLine ->
+			assert searchLogLine.terms.size() == 2;
+		}
+		
 	}
 
 	File testFile(String filename){

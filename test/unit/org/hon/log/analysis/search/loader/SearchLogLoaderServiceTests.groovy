@@ -42,6 +42,4 @@ class SearchLogLoaderServiceTests extends GrailsUnitTestCase {
 		assert searchLogLoaderService.getLoaderService('tel');
 	}
 
-
-
 }

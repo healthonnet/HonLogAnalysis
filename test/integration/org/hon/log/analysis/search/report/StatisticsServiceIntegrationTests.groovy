@@ -20,7 +20,6 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 		super.tearDown()
 	}
 
-	@Ignore // dunno why this test is failing - nolan
 	void test_language_count() {
 		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.log').file)
 
@@ -29,7 +28,6 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 		assert m.en == 12
 	}
 	
-	@Ignore // dunno why this test is failing - nolan
 	void test_query_length() {
 		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.log').file)
 		List m = statisticsService.countByQueryLength();
@@ -38,7 +36,6 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 		assert m[3] == 1
 	}
 
-	@Ignore // dunno why this test is failing - nolan
 	void testMostUserTerms() {
 		new SearchLogLine(termList:['mickey', 'mouse'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
 		new SearchLogLine(termList:['mickey', 'minnie'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
@@ -50,7 +47,7 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 			'coke'
 		], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
 		new SearchLogLine(termList:['minnie', 'brushing'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:['soirŽe', 'mouse'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
+		new SearchLogLine(termList:['soirï¿½e', 'mouse'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
 
 		assert SearchLogLine.count() == 5
 
@@ -61,7 +58,6 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 		assert tcount.mouse == 2
 	}
 
-	@Ignore // dunno why this test is failing - nolan
 	void test_most_frequent_cooccurence() {
 		new SearchLogLine(termList:['mickey', 'minnie', 'mouse'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
 		new SearchLogLine(termList:['mickey', 'mouse'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
@@ -74,7 +70,7 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 			'coke'
 		], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
 		new SearchLogLine(termList:['minnie', 'brushing'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:['soirŽe', 'mouse', 'mickey'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
+		new SearchLogLine(termList:['soirï¿½e', 'mouse', 'mickey'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
 
 		assert SearchLogLine.count() == 6
 		assert Term.count() == 7
@@ -86,7 +82,6 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 		
 	}
 	
-	@Ignore // dunno why this test is failing - nolan
 	void test_countByCountry() {
 		new SearchLogLine(remoteIp:'129.195.0.205', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
 		new SearchLogLine(remoteIp:'129.195.0.205', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)

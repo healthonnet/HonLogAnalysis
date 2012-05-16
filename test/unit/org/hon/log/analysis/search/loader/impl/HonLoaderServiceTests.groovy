@@ -2,6 +2,7 @@ package org.hon.log.analysis.search.loader.impl
 
 import grails.test.*
 
+import org.hon.log.analysis.search.LoadedFile;
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.query.Term
 

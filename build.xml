@@ -30,6 +30,10 @@
 		
 	</target>	
 	
+	<target name="deploy-to-znravel" depends="build-war">
+		  <deploy_war host="znravel" username="gaudinat" catalinadir="solr/tomcat/search"/>
+	</target>
+	
 	<target name="deploy-to-znverdi" depends="build-war">
 		<deploy_war host="znverdi" username="tomcat" catalinadir="tomcat/"/>
 	</target>

@@ -93,10 +93,12 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 		assert SearchLogLine.count() == 6
 		
 		Map m =statisticsService.countByCountry()
-		assert m.size() == 2
-		assert m.nbIp == 2
-		assert m.count.size() == 2
-		assert m.count.DZ == 4
-		assert m.count.CH == 2
+		
+		assert m.size() == 3
+		assert m.totalCount == 6;
+		assert m.ipsCount == 2
+		assert m.countryCodeCounts.size() == 2
+		assert m.countryCodeCounts.DZ == 4
+		assert m.countryCodeCounts.CH == 2
 	}
 }

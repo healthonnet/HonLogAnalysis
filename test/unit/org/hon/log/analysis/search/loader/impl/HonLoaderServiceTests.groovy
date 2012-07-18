@@ -20,14 +20,17 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		//only accept line with action=search
 		assert service.acceptLine('<<remoteIp=82.234.160.53>><<usertrack=->><<time=[29/Nov/2011:08:45:54 +0100]>><<query=?engine=honSelect&search=Arthrogrypose&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/HONselect_f?search>>')
 		
-		//reject logline from honCode
-		assert !service.acceptLine('<<remoteIp=91.180.82.31>><<usertrack=->><<time=[19/Dec/2011:15:44:21 +0100]>><<query=?engine=honCodeSearch&q=la%2Bprostate&language=fr&action=search>><<referer=http://www.hon.ch/HONcode/Search/search_f.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&lr=lang_fr&hl=fr&cof=FORID%3A11&q=la+prostate>>')
+		//accept logline from honCode
+		assert service.acceptLine('<<remoteIp=91.180.82.31>><<usertrack=->><<time=[19/Dec/2011:15:44:21 +0100]>><<query=?engine=honCodeSearch&q=la%2Bprostate&language=fr&action=search>><<referer=http://www.hon.ch/HONcode/Search/search_f.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&lr=lang_fr&hl=fr&cof=FORID%3A11&q=la+prostate>>')
 
 		//empty search
 		assert !service.acceptLine('<<remoteIp=195.189.142.231>><<usertrack=195.189.142.231.1323565174598994>><<time=[11/Dec/2011:01:59:35 +0100]>><<query=?engine=honSelect&action=search>><<referer=->>')
 
 		//reject logline from db-style
 		assert !service.acceptLine('119.159.11.181 - - [03/May/2012:17:36:33 +0200] "GET /~honlogs/logger.png?engine=honSelect&search=Genitalia%2C+Female&EXACT=0&TYPE=1&action=search HTTP/1.1" 200 6133');
+		
+		// accept euhp line
+		assert service.acceptLine('<<remoteIp=194.230.70.132>><<usertrack=129.195.199.181.1339488644214776>><<time=[17/Jul/2012:08:20:47 +0200]>><<query=?engine=euhpSearch&q=asthma+&facet=%2Beuportal_site_facet%3Atrue%2B!has_video_facet%3Atrue%2B!is_feed_facet%3Atrue%2B!is_event_facet%3Atrue&page=null&click=&link=undefined&action=autocomplete-search>><<referer=http://localhost:9090/hon-search/euhp>>');
 		
 	}
 

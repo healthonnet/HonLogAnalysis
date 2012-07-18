@@ -34,7 +34,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 
 	
 	final String source = 'hon'
-	final Pattern patternQuery = ~/\bsearch=([^&]+?)&/
+	final Pattern patternQuery = ~/\b(?:q|search)=([^&]+?)&/
 	final Pattern patternEngine = ~/\bengine=([^&]+?)&/
 	final Pattern patternBlock = ~/<<(\w+)=(.*?)>>/
 	final Pattern patternDateCleanup = ~/\s+[\+\-]\d+/

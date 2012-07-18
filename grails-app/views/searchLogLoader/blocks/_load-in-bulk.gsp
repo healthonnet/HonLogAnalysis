@@ -2,9 +2,11 @@
 <fieldset class="form">
 	<g:form action="bulkLoad" method="GET">
 		<div class="fieldcontain">
-			<label for="filedir">Enter local directory containing log files:</label>
+			<label for="filedir">Enter local directory containing log files (default: ${grailsApplication.config.honlogDefault.filedir } }):</label>
 			<g:textField name="filedir" value="${params.filedir}" />
-			<g:submitButton name="Load" id="go"/>
+			<br/><label for="filedir">Enter filter (default: ${grailsApplication.config.honlogDefault.filter } }):</label>
+			<g:textField name="filter" value="${params.filter}" />
+			<br/><g:submitButton name="doAction" id="go"/>
 		</div>
 	</g:form>
 </fieldset>

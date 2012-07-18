@@ -39,11 +39,14 @@ class SearchLogLoaderService implements InitializingBean{
 		SearchLogLineLoaderAbst service = getLoaderService(source)
 		LoadedFile loadedFile = new LoadedFile(filename: options.origFile?:file.absolutePath).save(failOnError:true)
 
+		def filter = options?.filter;
+		
 		int n=0;
 		file.eachLine{
 			line ->
 			try{
-				if(!service.acceptLine(line)){
+				
+				if(!service.acceptLine(line) || (filter && !line.contains(filter))){
 					return;
 				}
 				SearchLogLine sll=service.parseLine(line)

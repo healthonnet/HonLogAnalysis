@@ -25,11 +25,14 @@ class SearchLogLoaderController {
 	 * @author nolan
 	 */
 	def bulkLoad = {
-		if (params.filedir != null) {
-			File directory = new File(params.filedir);
+		def filedir = params.filedir?: grailsApplication.config.honlogDefault.filedir;
+		def filter = params.filter ?: grailsApplication.config.honlogDefault.filter;
+		
+		if (params.doAction) {
+			File directory = new File(filedir);
 			
 			if (!directory?.isDirectory()) {
-				return [output : "Directory '$params.filedir' not found."];
+				return [output : "Directory '$filedir' not found."];
 			}
 			
 			int lineCount = 0;
@@ -46,7 +49,11 @@ class SearchLogLoaderController {
 					continue;
 				}
 				// hard code 'hon' style logs for now
-				int currentLineCount = searchLogLoaderService.load('hon', file, [origFile:file.getName()]);
+				def options = [
+					origFile : file.getName(),
+					filter : filter
+					];
+				int currentLineCount = searchLogLoaderService.load('hon', file, options);
 				
 				lineCount += currentLineCount;
 				fileCount++;

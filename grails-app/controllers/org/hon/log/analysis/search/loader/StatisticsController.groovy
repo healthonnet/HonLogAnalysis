@@ -31,12 +31,12 @@ class StatisticsController {
 				]
 	}
 	def countByCountry = {
-		Map m = statisticsService.countByCountry()
+		Map result = statisticsService.countByCountry()
 		
 		[
-					nbTotal:SearchLogLine.count(),
-					nbIp:m.nbIp,
-					countBy:googleVisualizationDataFromCount(m.count, [category:'country'])
+					nbTotal:result.totalCount,
+					nbIp:result.ipsCount,
+					countBy:googleVisualizationDataFromCount(result.countryCodeCounts, [category:'country'])
 				]
 	}
 

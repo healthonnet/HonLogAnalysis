@@ -2,6 +2,7 @@ package org.hon.log.analysis.search.report
 
 
 import java.util.Map
+import groovy.sql.Sql
 
 import org.grails.geoip.service.GeoIpService;
 import org.hon.log.analysis.search.SearchLogLine
@@ -12,6 +13,8 @@ import com.maxmind.geoip.Location;
 class StatisticsService {
 	GeoIpService geoIpService
 	static transactional = false
+	
+	javax.sql.DataSource dataSource;
 
 	/**
 	 * 
@@ -117,24 +120,35 @@ class StatisticsService {
 	}
 
 	Map countByCountry(options=[:]){
-		Map count=[:]
-		Map cache=[:]
-		int nbIp = 0
-		SearchLogLine.list().each{SearchLogLine sll ->
-			if (!sll.remoteIp || sll.remoteIp=='-')
-				return null
-			if(!cache[sll.remoteIp]){
-				Location location = geoIpService.getLocation(sll.remoteIp)
-				cache[sll.remoteIp]=location?.countryCode?:'unknown'
-				nbIp++
+		
+		// do in raw sql because it's faster
+		
+		def db = new Sql(dataSource)
+		def query = "select remote_ip,count(*) from search_log_line where remote_ip is not null group by remote_ip"
+		def totalCount = 0;
+		def ipsCount = 0;
+		Map countryCodeCounts=[:]
+
+		db.eachRow(query) { row ->
+			def remoteIp = row[0];
+			def count = row[1];
+			
+			Location location = geoIpService.getLocation(remoteIp)
+			
+			def countryCode = location?.countryCode?:'unknown'
+			
+			// set or increment
+			if (!countryCodeCounts[countryCode]) {
+				countryCodeCounts[countryCode] = count
+			} else {
+				countryCodeCounts[countryCode] += count
 			}
-			String cc = cache[sll.remoteIp]
-			if(cc == 'unknown'){
-				return
-			}
-			count[cc]=count[cc]?(count[cc]+1):1;
+			ipsCount++;
+			totalCount += count;
 		}
-		[nbIp:nbIp, count:count]
+		[totalCount : totalCount,
+			ipsCount : ipsCount,
+			countryCodeCounts : countryCodeCounts]
 	}
 
 

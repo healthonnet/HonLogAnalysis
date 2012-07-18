@@ -16,8 +16,6 @@ class SearchLogLoaderService implements InitializingBean{
 
 	static transactional = true
 
-	final BATCH_SIZE = 100;
-	
 	def sessionFactory;
 	
 	/**
@@ -53,13 +51,12 @@ class SearchLogLoaderService implements InitializingBean{
 				if(sll.origQuery.length()>=1000){
 					return
 				}
-				
+				//println "search log line: $sll"
 				loadedFile.addToSearchLogLines(sll)
-				if(++n % BATCH_SIZE == 0){
-					saveFile(loadedFile);
-				}
+				n++
 			}catch(Exception e){
 				log.error("Cannot parse $line", e)
+				throw new RuntimeException(e);
 			}
 		}
 		saveFile(loadedFile)

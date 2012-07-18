@@ -59,7 +59,7 @@
 			<sshexec host="@{host}"
                        username="@{username}"
                        keyfile="${ssh.keyfile}"
-                       command='rm -r @{catalinadir}/webapps/${target.war.filename}'
+                       command='rm -fr @{catalinadir}/webapps/${target.war.filename}'
                />
 			<!-- copy the war remote -->
 			<property name="tmp" value="@{host}"></property>

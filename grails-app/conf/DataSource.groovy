@@ -4,7 +4,7 @@ dataSource {
 hibernate {
 	cache.use_second_level_cache = true
 	cache.use_query_cache = true
-	
+	show_sql = false
 	//jdbc.batch_size=50
 
 	cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'

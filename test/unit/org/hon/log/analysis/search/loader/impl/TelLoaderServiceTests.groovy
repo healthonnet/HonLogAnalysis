@@ -2,7 +2,9 @@ package org.hon.log.analysis.search.loader.impl
 
 import grails.test.*
 
+import org.hon.log.analysis.search.IpAddress;
 import org.hon.log.analysis.search.SearchLogLine
+import org.hon.log.analysis.search.Country
 import org.hon.log.analysis.search.query.Term
 
 class TelLoaderServiceTests extends GrailsUnitTestCase {
@@ -10,6 +12,10 @@ class TelLoaderServiceTests extends GrailsUnitTestCase {
 
 	protected void setUp() {
 		super.setUp()
+		mockDomain(SearchLogLine)
+		mockDomain(Term)
+		mockDomain(Country)
+		mockDomain(IpAddress)
 	}
 
 	protected void tearDown() {
@@ -50,8 +56,6 @@ class TelLoaderServiceTests extends GrailsUnitTestCase {
 	}
 
 	void test_parse_log_line_basic() {
-		mockDomain(SearchLogLine)
-		mockDomain(Term)
 		SearchLogLine sll = service.parseLine('100778,guest,161.53,6DF31EF9B4CF4B7513B077217BC99C41,en,"(""science and nature"")",view_full,a0073,1,1,,"http://search.theeuropeanlibrary.org/portal/search/collections/a0073/(""science and nature"").query?position=1",2009-03-23 00:00:00.0')
 		assert sll
 		assert sll.source == 'tel'
@@ -66,8 +70,6 @@ class TelLoaderServiceTests extends GrailsUnitTestCase {
 	}
 	
 	void test_parse_log_line__multiple_terms_and_topics() {
-		mockDomain(SearchLogLine)
-		mockDomain(Term)
 		SearchLogLine sll = service.parseLine('101595,guest,194.63,CF734832BBA23495C52652356E448B4B,en,"(title all ""atlas"") and (creator all ""dufour"")",view_full,a0071,6,3,,"http://search.theeuropeanlibrary.org/portal/search/collections/a0071/(title all ""atlas"") and (creator all ""dufour"").query?position=3",2009-03-23 00:00:00.0')
 		assert sll
 		assert sll.terms.collect{"$it"}.sort() == ['atlas', 'dufour']
@@ -75,8 +77,6 @@ class TelLoaderServiceTests extends GrailsUnitTestCase {
 	}
 	
 	void test_parse_log_line_single_term() {
-		mockDomain(SearchLogLine)
-		mockDomain(Term)
 		SearchLogLine sll = service.parseLine('103272,guest,79.127,4979D27FBEEC2607758912BE74A12550,ru,"(title all ""credit risk"")",see_online,a0071,59,6,,http://othes.univie.ac.at/210/,2009-03-24 00:00:00.0')
 		assert sll
 		assert sll.language == 'ru'

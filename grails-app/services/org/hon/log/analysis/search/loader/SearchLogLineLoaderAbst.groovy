@@ -62,7 +62,7 @@ abstract class SearchLogLineLoaderAbst {
 			    country = new Country(
 					countryCode : countryCode, 
 					countryName : location?.countryName?:'unknown',
-					).save(failOnError: true);
+					).save(failOnError: true, validate: false);
 			}
 			ipAddress.country = country;
 			ipAddress.save(failOnError: true);

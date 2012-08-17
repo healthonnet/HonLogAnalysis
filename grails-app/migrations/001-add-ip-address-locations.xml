@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet author="nolan" id="create-ip-address-table">
+		<createTable tableName="ip_address">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="value" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="country_id" type="BIGINT"/>
+		</createTable>
+        
+        <createTable tableName="country">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="country_code" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="country_name" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        
+		<createIndex indexName="idx_ip_address_value" tableName="ip_address"
+			unique="true">
+			<column name="value" />
+		</createIndex>
+        
+        <createIndex indexName="idx_country_code" tableName="country"
+            unique="true">
+            <column name="country_code" />
+        </createIndex>
+        
+		<addColumn tableName="search_log_line">
+			<column name="ip_address_id" type="BIGINT" />
+		</addColumn>
+        
+		<sql>insert into ip_address (value) select distinct remote_ip from
+			search_log_line
+		</sql>
+
+		<sql>update search_log_line sll, ip_address ia set ip_address_id =
+			ia.id where sll.remote_ip = ia.value
+		</sql>
+
+		<dropColumn tableName="search_log_line" columnName="remote_ip" />
+	</changeSet>
+
+	<changeSet author="nolan" id="add-locations-to-ip-address-table">
+		<customChange
+			class="org.hon.log.analysis.search.migration.IpAddressToLocationCustomSqlChange" />
+	</changeSet>
+</databaseChangeLog>

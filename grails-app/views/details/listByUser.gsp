@@ -17,7 +17,7 @@
 <g:each in="${userList.entrySet()}" var="user">
 <tr>
 <td>${user.key}</td>
-<td style="text-align:center">${user.value.size()} </td> 
+<td style="text-align:center">${user.value} </td> 
 <td><g:link controller="details" action="listDetailsByUser" id="${user.key}" >View Details</g:link></td>
 </tr>
 

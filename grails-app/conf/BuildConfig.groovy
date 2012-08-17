@@ -28,5 +28,6 @@ grails.project.dependency.resolution = {
 
         runtime 'mysql:mysql-connector-java:5.1.13'
 		build "hsqldb:hsqldb:1.8.0.10"
+		build "org.grails.plugins:database-migration:1.1"
     }
 }

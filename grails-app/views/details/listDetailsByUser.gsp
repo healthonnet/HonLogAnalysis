@@ -11,10 +11,10 @@
 	</tr>
 </thead>
 <tbody>
-<g:each in="${details.entrySet()}" var="details">
+<g:each in="${details.entrySet()}" var="entry">
 <tr>
-<td style="text-align:right;">${details.key}</td>
-<td>${details.value}</td>
+<td style="text-align:right;">${entry.key}</td>
+<td>${entry.value}</td>
 </tr>
 
 </g:each>

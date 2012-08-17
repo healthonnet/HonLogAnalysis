@@ -18,7 +18,7 @@ grails.views.javascript.library="jquery"
 //hostip.datasource.username="hostip"
 //hostip.datasource.password="h0st1p"
 
-geoip.data.resource= "/WEB-INF/resources/GeoLiteCity.dat"
+geoip.data.resource= "/WEB-INF/classes/GeoLiteCity.dat"
 geoip.data.cache = LookupService.GEOIP_MEMORY_CACHE
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
@@ -62,15 +62,19 @@ grails.spring.bean.packages = []
 // request parameters to mask when logging exceptions
 grails.exceptionresolver.params.exclude = ['password']
 
+grails.plugin.databasemigration.updateOnStartFileNames = ['changelog.xml']
+
+
 // set per-environment serverURL stem for creating absolute links
 
 def username = System.getProperty('user.name')
 environments {
     production {
+		grails.plugin.databasemigration.updateOnStart = true // run the database migrations automatically
 				grails.config.locations=[
 					"classpath:${appName}-config.properties"
 				]
-    }
+				    }
     development {
         grails.serverURL = "http://localhost:8080/${appName}"
 				grails.config.locations=[

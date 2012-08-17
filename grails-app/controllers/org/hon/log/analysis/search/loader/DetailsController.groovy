@@ -9,7 +9,7 @@ import org.hon.log.analysis.search.report.StatisticsService;
 
 
 
-class DetailsController {
+class DetailsController extends LogAnalysisControllerAbst {
 	
 	DetailsService  detailsService
 	
@@ -25,9 +25,10 @@ class DetailsController {
 	
 	
 	def listByUser = {
+		def listByUserResult = detailsService.listByUser();
 		[			
-					nbUserId:detailsService.listByUser().size(),
-					userList:detailsService.listByUser(),
+					nbUserId:listByUserResult.size(),
+					userList:listByUserResult,
 					nbTotal:SearchLogLine.count()
 				]
 	}
@@ -53,7 +54,7 @@ class DetailsController {
 	
 	def termsByUser = {
 		[
-					userTerms:googleVisualizationDetails(detailsService.distinctTermsByUser()),
+					userTerms:googleVisualizationDataFromCount(detailsService.distinctTermsByUser(), [category:'user']),
 					nbTotal:SearchLogLine.count()
 				]
 		
@@ -64,67 +65,5 @@ class DetailsController {
 	def djReport = {
 		redirect(controller:'djReport', params:[entity:'searchLogLine'])
 	}
-	
-	
-	
-	
-	private Map googleVisualizationDataFromCount(countBy, Map options){
-		def ret =[:]
-		ret.columns  = [
-			[
-				'string',
-				options?.category?:'category'
-				
-			],
-			[
-				'number',
-				options?.count?:'count'
-				
-			]
-		]
-		ret.values= []
-		if(countBy in Map){
-			countBy.each{k, v -> ret.values <<[k, v]}
-		}else{
-			countBy.eachWithIndex{v, i -> if(v) ret.values << [i, v]}
-		}
-		ret
-	}
-	
-	
-	private Map googleVisualizationDetails(countBy, Map options){
-		def ret =[:]
-		ret.columns  = [
-			[
-				'string',
-				options?.category?:'User'
-			],
-			[
-				'string',
-				options?.terms?:'Terms'
-			]
-		]
-		ret.values= []
-		if(countBy in Map){
-			String temp;
-			countBy.each{k, v ->
-			   temp=''
-			   if(!v)
-			   	return
-				   
-			   v.each{String str->
-				   temp+=str+', '
-				   }
-			   temp=temp[0..-3]
-			   
-			
-				ret.values <<[k, temp]}
-		}else{
 		
-			countBy.eachWithIndex{v, i -> if(v) ret.values << [i, '', v]}
-		}
-		ret
-	}
-	
-	
 }

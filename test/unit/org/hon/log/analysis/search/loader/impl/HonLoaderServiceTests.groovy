@@ -5,11 +5,17 @@ import grails.test.*
 import org.hon.log.analysis.search.LoadedFile;
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.query.Term
+import org.hon.log.analysis.search.IpAddress
+import org.hon.log.analysis.search.Country
 
 class HonLoaderServiceTests extends GrailsUnitTestCase {
 	HonLoaderService service = [:]
 	protected void setUp() {
 		super.setUp()
+		mockDomain(Term)
+		mockDomain(SearchLogLine)
+		mockDomain(IpAddress)
+		mockDomain(Country)
 	}
 
 	protected void tearDown() {
@@ -47,8 +53,6 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 	}
 	
 	void test_parse_line_basic(){
-		mockDomain(Term)
-		mockDomain(SearchLogLine)
 		SearchLogLine sll = service.parseLine('<<remoteIp=187.18.200.5>><<usertrack=187.18.200.5.1322553057659472>><<time=[29/Nov/2011:08:51:41 +0100]>><<query=?engine=honSelect&search=Nefrocalcinose&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/HONselect_pt?browse+C12.777.419.590>>')
 		assert sll
 		assert sll.terms.collect{"$it"} == ['nefrocalcinose']
@@ -61,8 +65,6 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 	}
 	
 	void test_parse_line_basic_2(){
-		mockDomain(Term)
-		mockDomain(SearchLogLine)
 		SearchLogLine sll = service.parseLine('<<remoteIp=129.143.71.36>><<usertrack=->><<time=[29/Nov/2011:08:50:45 +0100]>><<query=?engine=honSelect&search=Krankheitszeichen+und+Symptome&EXACT=0&TYPE=1&action=search>><<referer=http://www.hon.ch/HONselect/Selection_de/C23.888.html>>')
 		assert sll
 		assert sll.terms.collect{"$it"}.sort() == ['krankheitszeichen','symptome','und']
@@ -75,19 +77,15 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 	}
 	
 	void test_multi_terms(){
-		mockDomain(SearchLogLine)
-		mockDomain(Term)
 		String str = '<<remoteIp=108.195.226.117>><<usertrack=->><<time=[11/Dec/2011:23:09:58 +0100]>><<query=?engine=honSelect&search=Cushing+Syndrome&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/HONselect_f?search>>>>'
 		assert service.acceptLine(str)
 		SearchLogLine sll = service.parseLine(str)
-		assert sll
+		assert sll	
 		assert sll.terms.collect{"$it"}.sort() == ['cushing', 'syndrome']
-		assert sll.remoteIp == '108.195.226.117'
+		assert sll.ipAddress.value == '108.195.226.117'
 	}
 
 	void test_multi_terms_encoded(){
-		mockDomain(SearchLogLine)
-		mockDomain(Term)
 		
 		String str = '<<remoteIp=88.74.122.100>><<usertrack=88.74.122.100.1323558003433727>><<time=[11/Dec/2011:00:00:04 +0100]>><<query=?engine=honSelect&search=Genitalkrankheiten%2C+m%C3%A4nnliche&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/HONselect_f?search>>>>'
 		assert service.acceptLine(str)
@@ -100,8 +98,6 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 	}
 	
 	void test_problem_lines(){
-		mockDomain(SearchLogLine)
-		mockDomain(Term)
 		
 		checkLine('<<remoteIp=99.237.143.212>><<usertrack=99.237.143.212.1322781922269303>><<time=[02/Dec/2011:00:25:24 +0100]>><<query=?engine=honSelect&search=Crohn+Disease&action=search>><<referer=http://www.hon.ch/HONselect/RareDiseases/EN/C06.405.205.731.500.html>>')
 		checkLine('<<remoteIp=41.141.213.111>><<usertrack=41.141.213.111.1322862572791662>><<time=[02/Dec/2011:22:49:36 +0100]>><<query=?engine=honSelect&search=Glandes+bulbo-ur%C3%A9trales&EXACT=0&TYPE=1&action=search>><<referer=http://129.195.254.166/cgi-bin/HONselect_f?browse+A05.360.444.123>>')

@@ -14,7 +14,7 @@
 	       <tr>
 	           <td><g:link action="delete" id="${f.id }">delete</g:link></td>
                <td>${f.filename }</td>
-               <td class="center">${f.size() }</td>
+               <td class="center">${f.size }</td>
                <td>${f.loadedAt }</td>
 	       </tr>
 	   </g:each>

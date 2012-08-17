@@ -14,7 +14,7 @@ class SearchLogLoaderController {
 		}
 
 		[
-					loadedFiles:LoadedFile.list().sort({it.loadedAt}).reverse(),
+			loadedFiles:searchLogLoaderService.listAllLoadedFileSummaries().sort({it.loadedAt}).reverse()
 				]
 	}
 

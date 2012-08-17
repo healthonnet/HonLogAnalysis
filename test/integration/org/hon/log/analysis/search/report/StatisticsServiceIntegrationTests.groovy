@@ -24,81 +24,47 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.txt').file)
 
 		Map m = statisticsService.countByLanguage();
+		assert m.keySet() == ['en','de','it'] as Set
 		assert m.size() == 3
 		assert m.en == 12
 	}
 	
 	void test_query_length() {
 		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.txt').file)
-		List m = statisticsService.countByQueryLength();
-		assert m.grep({it}).size() == 3
-		assert m[1] == 3
-		assert m[3] == 1
+		Map m = statisticsService.countByQueryLength();
+		assert m == [1:3, 2:3, 3:1]
 	}
 
 	void testMostUserTerms() {
-		new SearchLogLine(termList:['mickey', 'mouse'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:['mickey', 'minnie'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:[
-			'mickey',
-			'prend',
-			'de',
-			'la',
-			'coke'
-		], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:['minnie', 'brushing'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:['soir�e', 'mouse'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
+		searchLogLoaderService.load('hon', new ClassPathResource('resources/hon-1.txt').file)
 
-		assert SearchLogLine.count() == 5
+		assert SearchLogLine.count() == 96
+		assert Term.count() == 145
 
 		Map tcount = statisticsService.mostUsedTerms([limit:2]);
-		assert tcount.size()==3
-		assert tcount.mickey == 3
-		assert tcount.minnie == 2
-		assert tcount.mouse == 2
+		assert tcount == [syndrome:12, diseases:10]
 	}
 
 	void test_most_frequent_cooccurence() {
-		new SearchLogLine(termList:['mickey', 'minnie', 'mouse'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:['mickey', 'mouse'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:['mickey', 'minnie'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:[
-			'mickey',
-			'prend',
-			'de',
-			'la',
-			'coke'
-		], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:['minnie', 'brushing'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(termList:['soir�e', 'mouse', 'mickey'], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-
-		assert SearchLogLine.count() == 6
-		assert Term.count() == 7
+		searchLogLoaderService.load('hon', new ClassPathResource('resources/hon-1.txt').file)
 		
 		Map m =statisticsService.mostFrequentTermCoOccurence(limit:2)
-		assert m.size() == 2
-		assert m['mickey|mouse'] ==3
-		assert m['mickey|minnie']==2
+		assert m == ['appareil|digestif':4, 'appareil|maladie':4]
+
 		
 	}
 	
 	void test_countByCountry() {
-		new SearchLogLine(remoteIp:'129.195.0.205', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'129.195.0.205', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'41.104.48.75', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'41.104.48.75', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'41.104.48.75', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-		new SearchLogLine(remoteIp:'41.104.48.75', termList:[], source:'test', origQuery:'xxx', date:new Date()).save(failOnError:true)
-
-		assert SearchLogLine.count() == 6
+		searchLogLoaderService.load('hon', new ClassPathResource('resources/hon-1.txt').file)
 		
 		Map m =statisticsService.countByCountry()
 		
 		assert m.size() == 3
-		assert m.totalCount == 6;
-		assert m.ipsCount == 2
-		assert m.countryCodeCounts.size() == 2
-		assert m.countryCodeCounts.DZ == 4
-		assert m.countryCodeCounts.CH == 2
+		assert m.totalCount == 96;
+		assert m.ipsCount == 57
+		assert m.countryCodeCounts == [DE:[2, 'Germany'], ES:[4, 'Spain'], US:[27, 'United States'], NO:[8, 'Norway'], 
+			FR:[4, 'France'], BR:[9, 'Brazil'], CA:[10, 'Canada'], MQ:[3, 'Martinique'], VE:[1, 'Venezuela'], 
+			TN:[8, 'Tunisia'], UA:[2, 'Ukraine'], AR:[5, 'Argentina'], EC:[2, 'Ecuador'], MA:[2, 'Morocco'], MX:[3, 'Mexico'], 
+			PT:[1, 'Portugal'], RU:[1, 'Russian Federation'], PE:[3, 'Peru'], PH:[1, 'Philippines']]
 	}
 }

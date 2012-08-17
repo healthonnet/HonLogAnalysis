@@ -9,7 +9,7 @@ class UrlMappings {
 			}
 		}
 
-		"/"(view:"/index")
+		"/"(controller:'searchLogLoader', action:'index')
 		"500"(view:'/error')
 	}
 }

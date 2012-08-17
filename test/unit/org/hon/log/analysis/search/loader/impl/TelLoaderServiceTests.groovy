@@ -61,7 +61,7 @@ class TelLoaderServiceTests extends GrailsUnitTestCase {
 		assert sll.language == 'en'
 		assert sll.origQuery == '(""science and nature"")'
 		assert sll.terms.collect{"$it"}.sort() == ['nature', 'science']
-		assert sll.remoteIp == '161.53'
+		assert sll.ipAddress.value == '161.53'
 
 	}
 	

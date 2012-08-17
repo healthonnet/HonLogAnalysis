@@ -3,10 +3,12 @@ package org.hon.log.analysis.search.loader
 import java.io.File;
 import java.util.Map;
 
+import groovy.sql.Sql
 import org.apache.poi.hssf.record.formula.functions.T
 import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.hibernate.FlushMode
 import org.hon.log.analysis.search.LoadedFile;
+import org.hon.log.analysis.search.LoadedFileSummary;
 import org.hon.log.analysis.search.SearchLogLine;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -14,9 +16,44 @@ class SearchLogLoaderService implements InitializingBean{
 	GrailsApplication grailsApplication
 	Map loaders
 
+	static final MAX_QUERY_SIZE = 1000
+	static final BATCH_SIZE = 100
+	
 	static transactional = true
 
+	javax.sql.DataSource dataSource;
+	def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
+	
 	def sessionFactory;
+	
+	/**
+	 * Summary view of the loaded files which displays more quickly, because Hibernate isn't loading the searchLogLines
+	 * (and their dependencies) just to do a count of them.
+	 * 
+	 * If you can't tell, I'm not a big fan of ORM. Google "ORM as anti-pattern" sometime. - nolan
+	 * @return
+	 */
+	public List listAllLoadedFileSummaries() {
+		
+		String query = """select lf.id, lf.filename, lf.loaded_at, count(sll.id)
+                          from loaded_file lf left join search_log_line sll
+                          on lf.id = sll.loaded_file_id
+                          group by lf.id"""
+		
+		def db = new Sql(dataSource)
+		return db.rows(query).collect{row ->
+			
+			new LoadedFileSummary(
+				id : row[0],
+				filename : row[1],
+				loadedAt : row[2],
+				size : row[3]
+				)
+			
+			
+			}
+		
+	}
 	
 	/**
 	 * load all {@link SearchLogLine} from the file
@@ -48,18 +85,20 @@ class SearchLogLoaderService implements InitializingBean{
 					return;
 				}
 				SearchLogLine sll=service.parseLine(line)
-				if(sll.origQuery.length()>=1000){
+				if(sll.origQuery.length()>=MAX_QUERY_SIZE){
 					return
 				}
-				//println "search log line: $sll"
+				sll.loadedFile = loadedFile;
 				loadedFile.addToSearchLogLines(sll)
-				n++
+				sll = sll.save(failOnError: true);
+				if (++n % BATCH_SIZE == 0) {
+					cleanUpGorm();
+				}
 			}catch(Exception e){
 				log.error("Cannot parse $line", e)
 				throw new RuntimeException(e);
 			}
 		}
-		saveFile(loadedFile)
 		
 		long totalTime = System.currentTimeMillis() - startTime
 		log.info("Loaded $n lines in $simpleFilename in $totalTime ms.")
@@ -67,19 +106,13 @@ class SearchLogLoaderService implements InitializingBean{
 		n
 	}
 	
-	def saveFile(loadedFile) {
-		try {
-			loadedFile.save(failOnError:true)
-			
+	def cleanUpGorm() {
 			// if we don't manually clear the session, we end up with a memory leak where
 			// each document takes long and longer until the JVM finally crashes
+		    // see discussion here: http://naleid.com/blog/2009/10/01/batch-import-performance-with-grails-and-mysql/
 			sessionFactory.currentSession.flush()
 			sessionFactory.currentSession.clear()
-		} catch (Throwable t) {
-			t.printStackTrace();
-			log.warn("Found error while processing log line", t);
-			throw new RuntimeException(t);
-		}
+			propertyInstanceMap.get().clear();
 	}
 	
 	/**

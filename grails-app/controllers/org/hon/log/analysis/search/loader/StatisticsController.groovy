@@ -6,7 +6,7 @@ import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.query.Term
 import org.hon.log.analysis.search.report.StatisticsService
 
-class StatisticsController {
+class StatisticsController extends LogAnalysisControllerAbst {
 	StatisticsService statisticsService
 
 	def index = {
@@ -17,7 +17,7 @@ class StatisticsController {
 				redirect(action:paction)
 		}
 	}
-
+	
 	def countByLanguage = {
 		[
 					nbTotal:SearchLogLine.count(),
@@ -36,7 +36,7 @@ class StatisticsController {
 		[
 					nbTotal:result.totalCount,
 					nbIp:result.ipsCount,
-					countBy:googleVisualizationDataFromCount(result.countryCodeCounts, [category:'country'])
+					countBy:googleVisualizationDataFromCount(result.countryCodeCounts, [category:'country', label:'country name'])
 				]
 	}
 
@@ -51,7 +51,7 @@ class StatisticsController {
 
 		[
 			terms:statisticsService.mostUsedTerms().collect {it.key},
-			countBy:googleVisualizationDataFromCount(statisticsService.countriesByTerm(params.term), [category:'terms']),
+			countBy:googleVisualizationDataFromCount(statisticsService.countriesByTerm(params.term), [category:'terms',label:'country name']),
 			nbTotal:Term.count()
 		]
 		//render(view:"countriesByTerm", template:"blocks/gv-geomap", model: map)
@@ -64,26 +64,4 @@ class StatisticsController {
 				]
 	}
 
-	
-	
-	private Map googleVisualizationDataFromCount(countBy, Map options){
-		def ret =[:]
-		ret.columns  = [
-			[
-				'string',
-				options?.category?:'category'
-			],
-			[
-				'number',
-				options?.count?:'count'
-			]
-		]
-		ret.values= []
-		if(countBy in Map){
-			countBy.each{k, v -> ret.values <<[k, v]}
-		}else{
-			countBy.eachWithIndex{v, i -> if(v) ret.values << [i, v]}
-		}
-		ret
-	}
 }

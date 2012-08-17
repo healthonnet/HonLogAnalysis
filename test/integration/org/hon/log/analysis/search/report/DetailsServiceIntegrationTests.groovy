@@ -11,43 +11,38 @@ class DetailsServiceIntegrationTests extends GroovyTestCase {
 	SearchLogLoaderService searchLogLoaderService
 	DetailsService detailsService
 	def sessionFactory;
-	
-    protected void setUp() {
-        super.setUp()		
-    }
 
-    protected void tearDown() {
-        super.tearDown()
-    }
-		
+	protected void setUp() {
+		super.setUp()
+	}
+
+	protected void tearDown() {
+		super.tearDown()
+	}
+
 	void test_group_by_user() {
 		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.txt').file)
-		
-			Map detByUser=detailsService.listByUser();
-			//how many users from the log file
-			assert detByUser.size() == 7
-			//how many line for the user
-			assert detByUser['2B09B2A6EDA8343B0B14DD2EB764ABA3'].size() == 3
-			//accessing a specific line of user, verifying its language
-			SearchLogLine sll=detByUser['2B09B2A6EDA8343B0B14DD2EB764ABA3'].get(1)
-			assert sll.language=='en'
-			
-		}
+
+		Map detByUser=detailsService.listByUser();
+		//how many users from the log file
+		assert detByUser.size() == 7
+		//how many line for the user
+		assert detByUser['2B09B2A6EDA8343B0B14DD2EB764ABA3'] == 3
+
+
+	}
 
 	void test_terms_by_user() {
 		searchLogLoaderService.load('hon', new ClassPathResource('resources/hon-1.txt').file)
 
 		assert SearchLogLine.count() == 96;
-		
+
 		Map detByUser=detailsService.distinctTermsByUser();
-		assert detByUser['84.49.130.205.1323558735943643'].size() == 19
+		assert detByUser['84.49.130.205.1323558735943643'] == 19
 		//how many distinct users from the log file
-		assert detByUser.size() == 32
-		//accessing list of terms of user, verifying a term
-		assert detByUser['84.49.130.205.1323558735943643'][2] == 'adie'
-		assert detByUser['84.49.130.205.1323558735943643'][3] == 'angelman'
-		
-		
+		assert detByUser.size() == 33
+
+
+
 	}
-	
 }

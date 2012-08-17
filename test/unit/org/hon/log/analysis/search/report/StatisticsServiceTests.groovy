@@ -20,24 +20,7 @@ class StatisticsServiceTests extends GrailsUnitTestCase {
 		super.tearDown()
 	}
 
-	void test_keep_most_famous(){
-		Map m =[
-					a:10,
-					b:8,
-					c:7,
-					d:7,
-					e:5,
-					f:4
-				]
-
-		service.keepMostFamous(m, 3)
-		assert m.size()==4
-		assert m == [
-			a:10,
-			b:8,
-			c:7,
-			d:7,
-		]
+	void testIt(){
 	}
 	
 

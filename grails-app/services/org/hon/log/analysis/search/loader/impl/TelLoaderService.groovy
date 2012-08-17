@@ -58,14 +58,15 @@ class TelLoaderService extends SearchLogLineLoaderAbst{
 				source:source,
 				sessionId:m[0][4],
 				userId:m[0][4],
-				remoteIp:m[0][3],
 				language:m[0][5],
 				origQuery:qStr,
 				termList:q.terms,
 				date:new Date(m[0][1].toInteger()),
 				topics:q.topics,
 				)
-		sll
+		
+		associateSearchLogLineWithRemoteIp(sll, m[0][3])
+		return sll
 	}
 
 	static transactional = true

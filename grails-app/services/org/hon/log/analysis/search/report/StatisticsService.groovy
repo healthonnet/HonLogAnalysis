@@ -11,7 +11,6 @@ import org.hon.log.analysis.search.query.Term
 import com.maxmind.geoip.Location;
 
 class StatisticsService {
-	GeoIpService geoIpService
 	static transactional = false
 	
 	javax.sql.DataSource dataSource;
@@ -21,33 +20,24 @@ class StatisticsService {
 	 * @return the total number of queries done counted by language
 	 */
 	Map countByLanguage() {
-		def ret=[:]
-		SearchLogLine.withCriteria {
-			projections {
-				groupProperty("language")
-				countDistinct("id", 'cptTerms');
-			}
-			order('cptTerms', 'desc')
-		}.each{
-			ret[it[0]]=it[1]
-		}
-		ret
+		
+		def UNKNOWN_STRING = "(Unknown)"; // TODO: i18n
+		
+		String query = """select language, count(*) from search_log_line group by language"""
+		def db = new Sql(dataSource)
+		return db.rows(query).collectEntries { row -> [row[0]?:UNKNOWN_STRING, row[1]]}
 	}
 	/**
 	 * 
 	 * @return the total number of queries counted by query length (number of terms)
 	 */
-	List countByQueryLength() {
-		def m = SearchLogLine.withCriteria {
-			projections {
-				groupProperty("nbTerms")
-				countDistinct("origQuery");
-			}
-			order('nbTerms', 'asc')
-		}
-		def ret = []
-		m.each{ ret[it[0]]=it[1] }
-		ret
+	Map countByQueryLength() {
+		String query = """select nb_terms,count(distinct orig_query) as counter
+                          from search_log_line
+                          group by nb_terms 
+                          order by nb_terms """
+		def db = new Sql(dataSource)
+		return db.rows(query).collectEntries { row -> [row[0],row[1]]}
 	}
 
 	/**
@@ -59,64 +49,58 @@ class StatisticsService {
 	 * @return a sort map term->count
 	 */
 	Map mostUsedTerms(options = [:]){
-		def l = Term.list().sort({-it.searchLogLines.size()})
+		// do in sql; it's faster
 		
-		int lim = options.limit?:50
-		int min =-1
-		if(l.size()>lim){
-			min = l[lim-1].size()
-		}
-		Map tcount = [:]
-		l.grep({it.size()>=min}).each{
-			tcount[it.value]=it.size()
-		}
-		tcount
+		int limit = options.limit?:50
 		
+		String query = """select t.value, count(*) as counter
+                          from term t, search_log_line_terms sllt 
+                          where t.id=sllt.term_id 
+                          group by t.value
+                          order by counter desc
+                          limit ?"""
+
+		def db = new Sql(dataSource)
+		
+		return db.rows(query, [limit]).collectEntries { row -> [row[0],row[1]]}
 	}
 
 	Map countriesByTerm(term){
-		if (term==null || term=="")
-		return null
-		println term
-			Map ret=[:]
-			List temp=[]
-			SearchLogLine.list().each{SearchLogLine sll ->
-				if(sll.termList.contains(term) && !temp.contains(sll.remoteIp)){
-					Location location = geoIpService.getLocation(sll.remoteIp)
-					temp<<sll.remoteIp
-					String country=location?.countryName?:'unknown';
-					if(ret[country]==null)
-						ret[country]=1;
-					else
-						ret[country]++
-					}
-					
-				}		
-			
-		ret
+
+		// do in sql; it's faster
+		
+		String query = """select c.country_code, count(*), c.country_name
+            from country c, ip_address ip, search_log_line sll, search_log_line_terms sllt, term t
+            where c.id = ip.country_id
+                and ip.id = sll.ip_address_id
+                and sll.id = sllt.search_log_line_id
+                and sllt.term_id = t.id
+                and t.value = ?
+            group by c.id
+        """
+		
+		def db = new Sql(dataSource)
+		
+		return db.rows(query, [term]).collectEntries{ row -> [row[0],[row[1],row[2]]]}
 	}
 	
 	Map mostFrequentTermCoOccurence(options=[:]){
-		Map count = [:]
-		SearchLogLine.list().each{SearchLogLine sll ->
-			List terms = sll.termList.sort();
-			int max= terms.size()-1
-			terms.eachWithIndex{t1, i ->
-				if(i==max){
-					return
-				}
-				((i+1)..max).each{ j ->
-					String t2=terms[j]
-					String k="$t1|$t2";
-					if(count[k]){
-						count[k]++
-					}else{
-						count[k]=1
-					}
-				}
-			}
-		}
-		keepMostFamous(count.sort{-it.value}, options.limit?:50)
+		
+		int limit = options?.limit?:50
+		
+		String query = """select t1.value as firstTerm, t2.value as secondTerm, count(*) as counter
+                          from term t1, search_log_line_terms sllt1, search_log_line_terms sllt2, term t2
+                          where t1.id=sllt1.term_id 
+                              and sllt1.search_log_line_id = sllt2.search_log_line_id
+                              and sllt2.term_id = t2.id
+                              and t1.value < t2.value
+                          group by t1.value,t2.value
+                          order by counter desc, t1.value, t2.value
+                          limit ?"""
+		
+		def db = new Sql(dataSource)
+		
+		return db.rows(query, [limit]).collectEntries {row -> [row[0]+"|"+row[1], row[2]]}
 	}
 
 	Map countByCountry(options=[:]){
@@ -124,51 +108,28 @@ class StatisticsService {
 		// do in raw sql because it's faster
 		
 		def db = new Sql(dataSource)
-		def query = "select remote_ip,count(*) from search_log_line where remote_ip is not null group by remote_ip"
+		def query = """
+            select c.country_code, c.country_name, count(*), count(distinct ip.id)
+            from search_log_line sll, ip_address ip, country c
+			where sll.ip_address_id=ip.id  and c.id=ip.country_id
+			group by c.country_code, c.country_name"""
 		def totalCount = 0;
 		def ipsCount = 0;
 		Map countryCodeCounts=[:]
 
 		db.eachRow(query) { row ->
-			def remoteIp = row[0];
-			def count = row[1];
+			def countryCode = row[0];
+			def countryName = row[1];
+			def logCount = row[2];
+			def ipCount = row[3];
 			
-			Location location = geoIpService.getLocation(remoteIp)
-			
-			def countryCode = location?.countryCode?:'unknown'
-			
-			// set or increment
-			if (!countryCodeCounts[countryCode]) {
-				countryCodeCounts[countryCode] = count
-			} else {
-				countryCodeCounts[countryCode] += count
-			}
-			ipsCount++;
-			totalCount += count;
+			countryCodeCounts[countryCode] = [logCount, countryName]
+			ipsCount += ipCount;
+			totalCount += logCount;
 		}
 		[totalCount : totalCount,
 			ipsCount : ipsCount,
 			countryCodeCounts : countryCodeCounts]
 	}
 
-
-	/**
-	 * remove all map member with values with are below the limit^th threshold
-	 * @param m
-	 * @param limit
-	 * @return
-	 */
-	Map keepMostFamous(Map m, int limit){
-		if(m.size()<=limit){
-			return m
-		}
-		def lim = m.values().toList()[limit-1]
-		Set remove = []
-		m.each{t, n ->
-			if(n<lim)
-				remove.add(t)
-		}
-		remove.each{m.remove(it)}
-		m
-	}
 }

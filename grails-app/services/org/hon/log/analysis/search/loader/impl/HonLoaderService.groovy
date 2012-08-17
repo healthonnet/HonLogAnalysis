@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.Map
 import java.util.regex.Pattern
 
+import org.grails.geoip.service.GeoIpService;
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.loader.SearchLogLineLoaderAbst
 
@@ -15,7 +16,6 @@ import org.hon.log.analysis.search.loader.SearchLogLineLoaderAbst
  *
  */
 class HonLoaderService extends SearchLogLineLoaderAbst{
-
 	static transactional = true
 
 	/**
@@ -85,7 +85,8 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery);
 		
 		Map parsedQuery = parseQuery(myLine2Map.query)
-		new SearchLogLine(
+		
+		def searchLogLine = new SearchLogLine(
 				source:source,
 				sessionId:myLine2Map.usertrack,
 				userId:myLine2Map.usertrack,
@@ -93,8 +94,11 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 				termList:parsedQuery.terms,
 				origQuery:query,
 				engine : engine,
-				remoteIp: myLine2Map.remoteIp
 				)
+		
+		associateSearchLogLineWithRemoteIp(searchLogLine, myLine2Map.remoteIp);
+		
+		return searchLogLine
 	}
 
 	/**

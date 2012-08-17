@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet author="nolan" id="initial-table-structure">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="loaded_file" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="loaded_file">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="filename" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="loaded_at" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="search_log_line">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="date" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="engine" type="VARCHAR(255)" />
+			<column name="language" type="VARCHAR(255)" />
+			<column name="nb_terms" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="orig_query" type="VARCHAR(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="query_id" type="VARCHAR(255)" />
+			<column name="remote_ip" type="VARCHAR(255)" />
+			<column name="session_id" type="VARCHAR(255)" />
+			<column name="source" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="user_id" type="VARCHAR(255)" />
+			<column name="loaded_file_id" type="BIGINT" />
+		</createTable>
+
+		<createTable tableName="search_log_line_terms">
+			<column name="term_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="search_log_line_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="term">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="value" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="term_search_log_lines">
+			<column name="search_log_line_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="term_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="search_log_line_id, term_id"
+			tableName="search_log_line_terms" />
+		<addForeignKeyConstraint baseColumnNames="loaded_file_id"
+			baseTableName="search_log_line" baseTableSchemaName="hon_log"
+			constraintName="FK9681D8C670806BF4" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="loaded_file"
+			referencedTableSchemaName="hon_log" referencesUniqueColumn="false" />
+		<addForeignKeyConstraint baseColumnNames="search_log_line_id"
+			baseTableName="search_log_line_terms" baseTableSchemaName="hon_log"
+			constraintName="FKC68058CEFC166F15" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="search_log_line"
+			referencedTableSchemaName="hon_log" referencesUniqueColumn="false" />
+		<addForeignKeyConstraint baseColumnNames="term_id"
+			baseTableName="search_log_line_terms" baseTableSchemaName="hon_log"
+			constraintName="FKC68058CE19D39FEF" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="term"
+			referencedTableSchemaName="hon_log" referencesUniqueColumn="false" />
+		<addForeignKeyConstraint baseColumnNames="search_log_line_id"
+			baseTableName="term_search_log_lines" baseTableSchemaName="hon_log"
+			constraintName="FK88E843E0FC166F15" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="search_log_line"
+			referencedTableSchemaName="hon_log" referencesUniqueColumn="false" />
+		<addForeignKeyConstraint baseColumnNames="term_id"
+			baseTableName="term_search_log_lines" baseTableSchemaName="hon_log"
+			constraintName="FK88E843E019D39FEF" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="term"
+			referencedTableSchemaName="hon_log" referencesUniqueColumn="false" />
+		<createIndex indexName="value" tableName="term" unique="true">
+			<column name="value" />
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>

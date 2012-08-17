@@ -6,95 +6,41 @@ import org.hon.log.analysis.search.SearchLogLine;
 
 import org.grails.geoip.service.GeoIpService;
 import com.maxmind.geoip.Location;
+import groovy.sql.Sql
 import groovy.time.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat
 
-import org.grails.geoip.service.GeoIpService;
-import com.maxmind.geoip.Location;
+import org.apache.poi.hssf.record.formula.functions.T
 
 class DetailsService {
 
-	GeoIpService geoIpService
-	static transactional = true
-
-	Map listByUser() {
-		
-		Map m=[:]
-		List l=SearchLogLine.list().each {it->
-			if (!it.userId || it.userId=='-'){
-			return;
-			}
-			if (it.termList.size()==0){
-				return;
-			}
-			
-			String userId= it.userId
-			if(m[userId] == null){
-				m[userId]=[]
-				
-			}
-			
-			m[userId]<<it
-			
-		};
+	static transactional = false
 	
+	javax.sql.DataSource dataSource;
+	
+	Map listByUser(options = [:]) {
 		
+		int limit = options?.limit?:50
 		
-		m=m.sort {-it.value.size() }
+		String query = """select sll.user_id, count(*) as counter
+                          from search_log_line sll, search_log_line_terms sllt
+                          where sll.id=sllt.search_log_line_id
+                          group by sll.user_id
+                          order by counter desc
+                          limit ?"""
 		
-		m
+		def db = new Sql(dataSource)
+		
+		return db.rows(query, [limit]).grep{it[0] != '-'}.collectEntries{row -> [row[0],row[1]]}
 	}
-	/*
-	double averagedTimeByUser(){
-		
-		def stD,eD
-		int nr=0
-		long sum=0
-		
-		Map m=listByUser()
-		m.each {i,List k->
-			Map temp=[:]
-			k.each {SearchLogLine sll->
-				Date date=sll.date	
-				def dt=date.format("yyyy-MM-dd")
-				
-				if(temp[dt] == null){
-					temp[dt]=[]	
-				}
-				
-				temp[dt]<<sll
-			}
-			
-			temp.each {j,List l->
-				l.sort{it.date}
-				if(l.size()>1)
-				{
-					stD=l.first().date
-					eD=l.last().date
-					println stD
-					println eD
-					TimeDuration duration=TimeCategory.minus(eD,stD)
-					sum+=duration.toMilliseconds()
-					nr++
-				}
-				
-				
-			}
-			
-		};
-		
-		 double res=(sum/nr)/60000
-		
-		res.round(2)
-	}
-	*/
+
+
 	Map listDetailsByUser(userId){
 		Map ret=[:]
 		TimeDuration duration
 		
-		Map m=listByUser()
-		def objList=m[userId]
+		def objList=SearchLogLine.findAllByUserId(userId)
 		objList.sort{it.date}
 		
 		SearchLogLine sll=objList[0]
@@ -119,29 +65,8 @@ class DetailsService {
 			}
 		}
 			
-		generateFile(ret,userId)
+		log.info("returning $ret")
 		ret
-	}
-	
-	void generateFile(Map details,userId){
-		
-		
-		try{
-			// Create file
-			FileWriter fw = new FileWriter("userDetails"+userId+".txt");
-			BufferedWriter out = new BufferedWriter(fw);
-			details.each {k,v->
-			out.write(k+" "+v);
-			out.newLine()
-			
-			}
-			//Close the output stream
-			out.close();
-			println "test"
-			}catch (Exception e){//Catch exception if any
-			System.err.println("Error: " + e.getMessage());
-			}
-		
 	}
 	
 	
@@ -186,62 +111,49 @@ class DetailsService {
 	}
 	List countQueriesPerDay() {
 		
-		Map m=[:]
-		int total=0
-		List l=SearchLogLine.list().sort{it.date}.each {it->
-			if(it.termList.size()==0){
-				return;
-			}
-			DateFormat df2 = new SimpleDateFormat("dd-MM-yyyy")
-			String dt=df2.format(it.date)
-			if(m[dt] == null){
-				m[dt]=0
-				
-			}
-			
-			m[dt]++
-			total++		
-			
-		};
-	
-		//m=m.collect(it).reverse()	
-		//m.sort{a,b-> b.key <=> a.key}
-	
+		String query = """SELECT day(date), month(date), year(date), count(*) 
+							FROM search_log_line
+							group by day(date),month(date),year(date)
+                            order by year(date) desc, month(date) desc, day(date) desc"""
 		// ordered by date in desc order
-		Map ret=[:]
-		m.reverseEach {it->
-				ret[it.key]=it.value
+							
+		def db = new Sql(dataSource)
+		Map m = db.rows(query).collectEntries{ row -> 
+			
+			// zero-pad to two characters to get a nice dd-MM-yyy format
+			def dateString = String.format('%02d',row[0]) + '-' +
+			                 String.format('%02d',row[1]) + '-' +
+							 row[2];
+							 
+			return [dateString,row[3]]
 			}
 		
+		// calculate total and average
+	    def total = m.values().sum{it}
 		double avg=total/m.size()
-		[avg.round(), ret,total]
-		
+		def result = [avg.round(), m, total]
+		log.info('returning result ' + result)
+		return result
 
 	}
-	
 
-	public Map distinctTermsByUser(){
-		Map userTerms=[:]
-		List l
-		
-		SearchLogLine.list().each{SearchLogLine searchLogLine ->
-			
-			if (!searchLogLine.userId || searchLogLine.userId=='-')
-				return
 
-				
-			if(userTerms[searchLogLine.userId]==null){
-					userTerms[searchLogLine.userId]= [] as SortedSet;		
-			}
-			userTerms[searchLogLine.userId].addAll(searchLogLine.termList)
-		}
+	public Map distinctTermsByUser(options = [:]){
 		
-		// convert sets to list
-		userTerms.keySet().each { key ->
-			userTerms[key] = userTerms[key] as List
-		}
-			   
-		userTerms
+		def limit = options?.limit?:50;
+		
+		
+		// do in sql, it's faster
+		
+		String query = """select sll.user_id, count(distinct sllt.term_id) as counter
+                          from search_log_line sll, search_log_line_terms sllt
+                          where sll.id=sllt.search_log_line_id
+                          group by sll.user_id
+                          order by counter desc
+                          limit ?
+        """
+		def db = new Sql(dataSource)
+		return db.rows(query, [limit]).collectEntries { row -> [row[0],row[1]]}
 	}
 	
 	Map sortTerms(mp){
@@ -252,12 +164,17 @@ class DetailsService {
 		m
 	}
 	
-	String getLocation(ip){
-		
-		Location location = geoIpService.getLocation(ip[0..ip.size()-18])
-		location?.countryName?:'unknown'
-		
-}
+	public String getLocation(String user) {
+		// just take the first IP address the user is associated with and use that country
+		String query = """select c.country_code
+                          from search_log_line sll, ip_address ip, country c
+                          where sll.ip_address_id = ip.id
+                              and ip.country_id = c.id
+                              and sll.user_id = ?
+                          limit 1"""
+		def db = new Sql(dataSource)
+		return db.firstRow(query, [user])[0];
+	}
 	
 	
 }

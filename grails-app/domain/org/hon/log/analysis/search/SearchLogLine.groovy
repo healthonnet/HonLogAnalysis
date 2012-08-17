@@ -9,7 +9,6 @@ class SearchLogLine {
 	String source
 	String sessionId
 	String userId
-	String remoteIp
 	String queryId
 	String origQuery
 	int nbTerms
@@ -17,8 +16,10 @@ class SearchLogLine {
 	String language
 	Date date
 	String engine
+	LoadedFile loadedFile
+	IpAddress ipAddress
 	
-	static belongsTo = LoadedFile	
+	static belongsTo = [loadedFile: LoadedFile,ipAddress: IpAddress]	
 	static hasMany = [terms:Term]
 	static StopWordRemover stopWordsRemover=[:]
 	
@@ -26,9 +27,9 @@ class SearchLogLine {
 	def static reportable = [
 		fileName:['DetailsReport'],
 		title:['Details of query logs'],
-		columns: ['remoteIp','date','origQuery', 'terms','nbTerms'],
-		columnTitles: ['remoteIp':'Remote IP','date': 'Date', 'origQuery': 'Original Query', 'terms':'Terms','nbTerms': 'Nb. of terms'],
-		groupColumns: ['remoteIp','date'],
+		columns: ['date','origQuery', 'terms','nbTerms'],
+		columnTitles: ['date': 'Date', 'origQuery': 'Original Query', 'terms':'Terms','nbTerms': 'Nb. of terms'],
+		groupColumns: ['date'],
 		autoTexts: [new AutoText(AutoText.AUTOTEXT_PAGE_X_OF_Y, AutoText.POSITION_FOOTER, HorizontalBandAlignment.buildAligment(AutoText.ALIGMENT_CENTER), (byte)0, 200, 200)]
 		
 ]
@@ -48,12 +49,12 @@ class SearchLogLine {
 	static transients = ['queryLength', 'termList']
 
 	static constraints = {
+		ipAddress nullable:true
 		sessionId nullable:true
 		userId nullable:true
 		queryId nullable:true
 		topics nullable:true
 		language nullable:true
-		remoteIp nullable:true
 		engine nullable:true
 		origQuery(maxSize:1000)
 	}

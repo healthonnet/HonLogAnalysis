@@ -32,12 +32,12 @@ environments {
 	}
 	production {
 		dataSource {
-			dbCreate = "update"
 			grails.config.locations=[
-				"file:${userHome}/${appName}-config.properties"
+				"classpath:application.properties"
 			]
 			dialect = 'org.hibernate.dialect.MySQL5InnoDBDialect'
 			driverClassName = "com.mysql.jdbc.Driver"
+			dbCreate = 'none' // I'll handle my own table creations, thank you very much
 		}
 	}
 }

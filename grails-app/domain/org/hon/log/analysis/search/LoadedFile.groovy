@@ -16,7 +16,8 @@ class LoadedFile {
 	static mapping = {
 		version false
 		
-		// why the hell would we need a join table for a 1-to-many mapping?
-		searchLogLines column : "loaded_file_id",joinTable:false
+		
+		searchLogLines column : "loaded_file_id",
+		        joinTable:false // why the hell would we need a join table for a 1-to-many mapping?
 	}
 }

@@ -18,7 +18,7 @@ grails.views.javascript.library="jquery"
 //hostip.datasource.username="hostip"
 //hostip.datasource.password="h0st1p"
 
-geoip.data.resource= "/WEB-INF/GeoLiteCity.dat"
+geoip.data.resource= "/WEB-INF/classes/GeoLiteCity.dat"
 geoip.data.cache = LookupService.GEOIP_STANDARD
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination

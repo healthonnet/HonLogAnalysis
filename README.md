@@ -40,7 +40,7 @@ This will build the file **hon-log.war**.
 
 
 [2]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot01.png
-[3]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot01.png
-[4]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot01.png
+[3]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot02.png
+[4]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot03.png
 [6]: http://www.hon.ch
 [8]: http://www.gnu.org/copyleft/lesser.html

@@ -131,13 +131,26 @@ Exporting the data
 To export a table of term + count to csv format, log into MySQL and do:
 
 ```sql
-select t.value,count(*) as count into outfile '/tmp/terms_with_counts.csv' fields terminated by ',' optionally enclosed by '"' lines terminated by '\n' from term t, search_log_line_terms sllt where t.id=sllt.term_id group by t.id having count(*) >= 10 order by count desc ;
+select t.value,count(*) as count
+   into outfile '/tmp/terms_with_counts.csv' 
+   fields terminated by ',' optionally enclosed by '"' 
+   lines terminated by '\n' 
+   from term t, search_log_line_terms sllt 
+   where t.id=sllt.term_id 
+   group by t.id having count(*) >= 10 
+   order by count desc ;
 ```
 
 To get the raw queries and their counts, log into MySQL and do:
 
 ```sql
-select orig_query,count(*) as count into outfile '/tmp/raw_queries_with_counts.csv' fields terminated by ',' optionally enclosed by '"' lines terminated by '\n' from search_log_line group by orig_query having count(*) >= 2 order by count desc ;
+select orig_query,count(*) as count 
+   into outfile '/tmp/raw_queries_with_counts.csv' 
+   fields terminated by ',' optionally enclosed by '"' 
+   lines terminated by '\n' 
+   from search_log_line 
+   group by orig_query having count(*) >= 2 
+   order by count desc ;
 ```
 
 More screenshots

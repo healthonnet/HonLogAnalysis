@@ -19,8 +19,9 @@ License
 Summary
 -----------
 
-Grails web application that analyzes HON search logs and provides statistics and visualizations.
+HON Log Analysis is a Grails web application that analyzes HON search logs and provides statistics and visualizations.
 
+![Screenshot][2]
 
 Build instructions
 ----------
@@ -36,5 +37,8 @@ ant -Dgrails.home=$GRAILS_HOME -Dconfig.file=my-config-file.properties
 This will build the file **hon-log.war**.
 
 
+[2]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot01.png
+[3]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot01.png
+[4]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot01.png
 [6]: http://www.hon.ch
 [8]: http://www.gnu.org/copyleft/lesser.html

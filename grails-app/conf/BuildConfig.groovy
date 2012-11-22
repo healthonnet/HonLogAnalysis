@@ -33,10 +33,12 @@ grails.project.dependency.resolution = {
     
     plugins {
         
-        build   ":database-migration:1.1"
-        build   ":tomcat:$grailsVersion"
-        build   ":hibernate:$grailsVersion"
         
+        build   ":tomcat:$grailsVersion"
+		
+        runtime   ":hibernate:$grailsVersion"
+		runtime   ":database-migration:1.1"
+		
         runtime ':blueprint:1.0.2'
         runtime ':blueprint-jquery-ui:0.2.0'
         runtime ':dynamic-jasper:0.6'

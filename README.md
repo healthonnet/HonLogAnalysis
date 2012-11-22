@@ -4,10 +4,10 @@ HON Log Analysis
 Developer
 -----------
 
-William Belle
-Nolan Lawson
-Alexandre Masselot
-Daniela Sinjari
+- William Belle
+- Nolan Lawson
+- Alexandre Masselot
+- Daniela Sinjari
 
 [Health On the Net Foundation][6]
 

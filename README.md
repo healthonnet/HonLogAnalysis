@@ -23,8 +23,6 @@ HON Log Analysis is a Grails web application that analyzes HON search logs and p
 
 ![Screenshot][3]
 
-![Screenshot][2]
-
 Build instructions
 ----------
 
@@ -38,6 +36,12 @@ ant -Dgrails.home=$GRAILS_HOME -Dconfig.file=my-config-file.properties
 
 This will build the file **hon-log.war**.
 
+More screenshots
+----------
+
+![Screenshot][2]
+
+![Screenshot][4]
 
 [2]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot01.png
 [3]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot02.png

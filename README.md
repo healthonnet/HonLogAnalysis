@@ -21,7 +21,7 @@ Summary
 
 HON Log Analysis is a Grails web application that analyzes HON search logs and provides statistics and visualizations.
 
-![Screenshot][3] ![Screenshot][4]
+![Screenshot][3]
 
 ![Screenshot][2]
 

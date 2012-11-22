@@ -24,6 +24,12 @@ ant -Dgrails.home=$GRAILS_HOME -Dconfig.file=myConfigFile.properties
              we're deploying to -->		
 	    <mkdir dir="target/tmpdir"/>
 	    <unzip src="target/${target.war.filename}.war" dest="target/tmpdir"/>
+		
+		<!-- Have to remove the annoying servlet-api.jar from the war for Tomcat
+		         TODO: this shouldn't be included by Grails in the first place... -->
+	    <echo message="Removing servlet-api-2.3.jar from war file for Tomcat..."/>
+	    <delete file="target/tmpdir/WEB-INF/lib/servlet-api-2.3.jar"/>
+		
 		<copy file="${config.file}" tofile="target/tmpdir/WEB-INF/classes/hon-log-config.properties"/>
 		<war destfile="target/${target.war.filename}.war" basedir="target/tmpdir"/>
 		<delete dir="target/tmpdir"/>

@@ -1,7 +1,7 @@
 HON Log Analysis
 =========================
 
-Developer
+Developers
 -----------
 
 - William Belle

@@ -94,7 +94,9 @@ log4j = {
 		'org.springframework',
 		'org.hibernate',
 		'net.sf.ehcache.hibernate',
-		'org.mortbay.log'
+		'org.mortbay.log',
+		'org.codehaus.groovy.grails',
+		'services'
 
 	info 'org.hon',
 	     'com.linkedin.grails' // profiler
@@ -104,6 +106,7 @@ log4j = {
 				 console name:'stdout',
 				 layout: pattern(conversionPattern: "%d{yyyy-MMM-dd HH:mm:ss,SSS} [%t] %c %x%n %-5p %m%n")
 				 
+				 console name:'stacktrace'
 		 
 			 }
 	 root {

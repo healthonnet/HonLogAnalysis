@@ -27,7 +27,28 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
         runtime 'mysql:mysql-connector-java:5.1.13'
-		build "hsqldb:hsqldb:1.8.0.10"
-		build "org.grails.plugins:database-migration:1.1"
+        
+        test    "hsqldb:hsqldb:1.8.0.10"
+    }
+    
+    plugins {
+        
+        build   ":database-migration:1.1"
+        build   ":tomcat:$grailsVersion"
+        build   ":hibernate:$grailsVersion"
+        
+        runtime ':blueprint:1.0.2'
+        runtime ':blueprint-jquery-ui:0.2.0'
+        runtime ':dynamic-jasper:0.6'
+        runtime ':geoip:0.2'
+        runtime ':google-visualization:0.4.2'
+        
+        runtime ':jasper:1.2.2'
+        runtime ':jquery:1.6.1.1'
+        runtime ':jquery-file-upload:0.2'
+        runtime ':jquery-json:2.2.2'
+        runtime ':jquery-ui:1.8.15'
+        runtime ':jqueryui-widget:0.1.4.1'
+        runtime  ':resources:1.1.1'
     }
 }

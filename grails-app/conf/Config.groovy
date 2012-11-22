@@ -18,8 +18,8 @@ grails.views.javascript.library="jquery"
 //hostip.datasource.username="hostip"
 //hostip.datasource.password="h0st1p"
 
-geoip.data.resource= "/WEB-INF/classes/GeoLiteCity.dat"
-geoip.data.cache = LookupService.GEOIP_MEMORY_CACHE
+geoip.data.resource= "/WEB-INF/GeoLiteCity.dat"
+geoip.data.cache = LookupService.GEOIP_STANDARD
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format

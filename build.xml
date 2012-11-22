@@ -1,3 +1,10 @@
+<!-- 
+
+To build the war for the project, simply run e.g.
+
+ant -Dgrails.home=$GRAILS_HOME -Dconfig.file=myConfigFile.properties
+
+-->
 <project name="hon-log-analysis" default="build-war">
 	
 	<property name="grails.bin" value="${grails.home}/bin/grails"/>
@@ -12,67 +19,15 @@
 			<arg value="target/${target.war.filename}.war"/>
 		</exec>
 		
-		<!-- Have to remove the annoying servlet-api.jar from the war for Tomcat
-		     TODO: this shouldn't be included by Grails in the first place... -->
-		<echo message="Removing servlet-api-2.3.jar from war file for Tomcat..."/>
-		<mkdir dir="target/tmpdir"/>
-		<unzip src="target/${target.war.filename}.war" dest="target/tmpdir"/>
-		
-		<delete file="target/tmpdir/WEB-INF/lib/servlet-api-2.3.jar"/>
-		
-		<!-- hard-code the khresmoi properties file to go in WEB-INF/classes.
-		     TODO: have Hudson build multiple copies of the war depending on where
-		     we're deploying to -->
+        <!-- hard-code the build-specific properties file to go in WEB-INF/classes.
+             That way, Jenkins can build multiple copies of the war depending on where
+             we're deploying to -->		
+	    <mkdir dir="target/tmpdir"/>
+	    <unzip src="target/${target.war.filename}.war" dest="target/tmpdir"/>
 		<copy file="${config.file}" tofile="target/tmpdir/WEB-INF/classes/hon-log-config.properties"/>
-		
 		<war destfile="target/${target.war.filename}.war" basedir="target/tmpdir"/>
 		<delete dir="target/tmpdir"/>
 		
 	</target>	
 	
-	<target name="deploy-to-znravel" depends="build-war">
-		  <deploy_war host="znravel" username="gaudinat" catalinadir="solr/tomcat/search"/>
-	</target>
-	
-	<target name="deploy-to-znverdi" depends="build-war">
-		<deploy_war host="znverdi" username="tomcat" catalinadir="tomcat/"/>
-	</target>
-	
-	<macrodef name="deploy_war">
-		<!-- tomcat host -->
-		<attribute name="host"/>
-		<!-- tomcat host username - ssh shall be setup that you don't need to enter password -->
-		<attribute name="username"/>
-		<!-- tomcat home -->
-		<attribute name="catalinadir"/>
-		<sequential>
-			<!-- shutdown, -force forces to wait for end of process, eventually send kill -9 -->
-			<!-- NB we must have set CATALINA_PID into bin/setenv.sh -->
-			<!-- failonerror is false because the command would fail if the process doe not run-->
-			<sshexec host="@{host}"
-                       username="@{username}"
-                       keyfile="${ssh.keyfile}"
-                       command="@{catalinadir}/bin/shutdown.sh -force"
-               	    failonerror="false"
-               />
-			<!-- to limit side effect, just remove -->
-			<sshexec host="@{host}"
-                       username="@{username}"
-                       keyfile="${ssh.keyfile}"
-                       command='rm -fr @{catalinadir}/webapps/${target.war.filename}'
-               />
-			<!-- copy the war remote -->
-			<property name="tmp" value="@{host}"></property>
-			<scp todir="@{username}@${tmp}:@{catalinadir}/webapps/${target.war.filename}.war" file="${target.war}" keyfile="${ssh.keyfile}"
-					passphrase=""/>
-			<!-- and start back -->
-			<sshexec host="@{host}"
-                       username="@{username}"
-                       keyfile="${ssh.keyfile}"
-                       command="@{catalinadir}/bin/startup.sh"
-               />
-
-		</sequential>
-
-	</macrodef>	
 </project>

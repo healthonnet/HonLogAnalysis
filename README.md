@@ -122,7 +122,7 @@ Defaults for "filter" and "filedir" are specified in the configuration file; if 
 This service can also be called from the command line using e.g.:
 
 ```
-curl 'http://localhost:8080/hon-log/bulkLoad?filedir=&filter=&doAction=true
+curl 'http://localhost:8080/hon-log/load/bulkLoad?filedir=&filter=&doAction=true
 ```
 
 Exporting the data

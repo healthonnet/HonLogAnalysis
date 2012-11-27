@@ -38,6 +38,15 @@ environments {
 			dialect = 'org.hibernate.dialect.MySQL5InnoDBDialect'
 			driverClassName = "com.mysql.jdbc.Driver"
 			dbCreate = 'none' // I'll handle my own table creations, thank you very much
+			
+			// the following supposedly resolves problems with Broken Pipe exceptions in MySQL, per
+			// http://stackoverflow.com/questions/2740987
+			// /mysql-connection-timeout-issue-grails-application-on-tomcat-using-hibernate-an
+			properties {
+				validationQuery               = "select 1"
+				testWhileIdle                 = true
+				timeBetweenEvictionRunsMillis = 60000
+			}
 		}
 	}
 }

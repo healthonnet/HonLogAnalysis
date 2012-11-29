@@ -13,7 +13,7 @@ hibernate {
 environments {
 	development {
 		dataSource {
-			dbCreate = "update" // one of 'create', 'create-drop','update'
+			dbCreate = 'none' // I'll handle my own table creations with 'migrations', thank you very much
 			url = "jdbc:mysql://localhost/hon_log?useUnicode=yes&characterEncoding=UTF-8"
 			username = "hon_log"
 			password = "hon_log"
@@ -37,7 +37,7 @@ environments {
 			]
 			dialect = 'org.hibernate.dialect.MySQL5InnoDBDialect'
 			driverClassName = "com.mysql.jdbc.Driver"
-			dbCreate = 'none' // I'll handle my own table creations, thank you very much
+			dbCreate = 'none' // I'll handle my own table creations with 'migrations', thank you very much
 			
 			// the following supposedly resolves problems with Broken Pipe exceptions in MySQL, per
 			// http://stackoverflow.com/questions/2740987

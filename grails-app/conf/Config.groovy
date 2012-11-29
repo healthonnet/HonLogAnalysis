@@ -76,6 +76,7 @@ environments {
 				]
 				    }
     development {
+		grails.plugin.databasemigration.updateOnStart = true // run the database migrations automatically
         grails.serverURL = "http://localhost:8080/${appName}"
 				grails.config.locations=[
 					"file:$username-dev.properties"

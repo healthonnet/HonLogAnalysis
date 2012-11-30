@@ -18,7 +18,6 @@ grails.views.javascript.library="jquery"
 //hostip.datasource.username="hostip"
 //hostip.datasource.password="h0st1p"
 
-geoip.data.resource= "/WEB-INF/classes/GeoLiteCity.dat"
 geoip.data.cache = LookupService.GEOIP_STANDARD
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
@@ -70,12 +69,14 @@ grails.plugin.databasemigration.updateOnStartFileNames = ['changelog.xml']
 def username = System.getProperty('user.name')
 environments {
     production {
+		geoip.data.resource= "/WEB-INF/classes/GeoLiteCity.dat"
 		grails.plugin.databasemigration.updateOnStart = true // run the database migrations automatically
 				grails.config.locations=[
 					"classpath:${appName}-config.properties"
 				]
 				    }
     development {
+		geoip.data.resource= "/src/groovy/GeoLiteCity.dat"
 		grails.plugin.databasemigration.updateOnStart = true // run the database migrations automatically
         grails.serverURL = "http://localhost:8080/${appName}"
 				grails.config.locations=[
@@ -84,6 +85,7 @@ environments {
 	
     }
     test {
+		geoip.data.resource= "/src/groovy/GeoLiteCity.dat"
         grails.serverURL = "http://localhost:8080/${appName}"
     }
 

@@ -27,7 +27,7 @@ import liquibase.resource.ResourceAccessor
 class IpAddressToLocationCustomSqlChange implements CustomSqlChange {
 
 	// defined as geoip.data.resource in Config.groovy, need to re-specify here because no spring injection is possible
-	private static final DATA_FILE_LOCATION = "/GeoLiteCity.dat";
+	private static final DATA_FILE_LOCATION = "GeoLiteCity.dat";
 
 	/**
 	 * For each IP address, look up the location using the location lookup service, then put it in the ip addresses table.
@@ -109,7 +109,7 @@ class IpAddressToLocationCustomSqlChange implements CustomSqlChange {
 	 */
 	def createLookupService() {
 
-		String fileName = getClass().getResource(DATA_FILE_LOCATION).getFile();
+		String fileName = getClass().getClassLoader().getResource(DATA_FILE_LOCATION).getFile();
 		LookupService lookupService = new LookupService(fileName);
 		return lookupService
 	}

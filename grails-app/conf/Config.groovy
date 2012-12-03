@@ -76,7 +76,7 @@ environments {
 				]
 				    }
     development {
-		geoip.data.resource= "/src/groovy/GeoLiteCity.dat"
+		geoip.data.resource= "/../src/groovy/GeoLiteCity.dat"
 		grails.plugin.databasemigration.updateOnStart = true // run the database migrations automatically
         grails.serverURL = "http://localhost:8080/${appName}"
 				grails.config.locations=[
@@ -85,7 +85,7 @@ environments {
 	
     }
     test {
-		geoip.data.resource= "/src/groovy/GeoLiteCity.dat"
+		geoip.data.resource= "/../src/groovy/GeoLiteCity.dat"
         grails.serverURL = "http://localhost:8080/${appName}"
     }
 

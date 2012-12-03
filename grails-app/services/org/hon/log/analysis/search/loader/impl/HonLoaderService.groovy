@@ -60,15 +60,24 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		return line.contains("<<usertrack=") && patternQuery.matcher(line).find();
 	}
 
-	Map parseQuery(String q){
-		q = findUrlDecodedIfRegexMatches(patternQuery, q);
+	Map parseQuery(String q, String engine){
+		q = findUrlDecodedIfRegexMatches(patternQuery, q, engine);
 		return [terms:q.split(/[\s,:;]+/).sort()]
 	}
 	
 	private String findUrlDecodedIfRegexMatches(Pattern pattern, String input) {
+		return findUrlDecodedIfRegexMatches(pattern, input, null);
+	}
+	
+	private String findUrlDecodedIfRegexMatches(Pattern pattern, String input, String engineType) {
 		def matcher = pattern.matcher(input);
 		if (matcher.find()) {
-			return URLDecoder.decode(matcher.group(1), 'UTF-8');
+			def unescapedQuery = matcher.group(1);
+			if ("honCodeSearch".equals(engineType)) {
+				// honCodeSearch is fucked up and url-encoded the query TWICE, just to piss me off - Nolan
+				unescapedQuery = URLDecoder.decode(unescapedQuery, 'UTF-8');
+			}
+			return URLDecoder.decode(unescapedQuery, 'UTF-8');
 		}
 		return null;
 	}
@@ -84,7 +93,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		String engine = findUrlDecodedIfRegexMatches(patternEngine, rawQuery);
 		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery);
 		
-		Map parsedQuery = parseQuery(myLine2Map.query)
+		Map parsedQuery = parseQuery(myLine2Map.query, engine)
 		
 		def searchLogLine = new SearchLogLine(
 				source:source,

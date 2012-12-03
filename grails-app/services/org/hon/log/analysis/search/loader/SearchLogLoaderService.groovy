@@ -16,7 +16,7 @@ class SearchLogLoaderService implements InitializingBean{
 	GrailsApplication grailsApplication
 	Map loaders
 
-	static final MAX_QUERY_SIZE = 1000
+	static final MAX_QUERY_SIZE = 255 // queries longer than this seem to cause bugs
 	static final BATCH_SIZE = 100
 	
 	static transactional = true
@@ -83,7 +83,7 @@ class SearchLogLoaderService implements InitializingBean{
 					return;
 				}
 				SearchLogLine sll=service.parseLine(line)
-				if(sll.origQuery.length()>=MAX_QUERY_SIZE){
+				if(sll.origQuery.length() > MAX_QUERY_SIZE){
 					return
 				}
 				sll.loadedFile = loadedFile;

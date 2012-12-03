@@ -60,6 +60,10 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		return line.contains("<<usertrack=") && patternQuery.matcher(line).find();
 	}
 
+	Map parseQuery(String q){
+		return parseQuery(String q, null);
+	}
+	
 	Map parseQuery(String q, String engine){
 		q = findUrlDecodedIfRegexMatches(patternQuery, q, engine);
 		return [terms:q.split(/[\s,:;]+/).sort()]

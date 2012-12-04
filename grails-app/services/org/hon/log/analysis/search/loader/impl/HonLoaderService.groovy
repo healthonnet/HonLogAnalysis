@@ -61,7 +61,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	}
 
 	Map parseQuery(String q){
-		return parseQuery(String q, null);
+		return parseQuery(q, null);
 	}
 	
 	Map parseQuery(String q, String engine){

@@ -134,6 +134,14 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
             "http://www.hon.ch/HONselect/RareDiseases/SP/C05.116.099.370.231.576.410.html"
             )
     }
+    
+    void testProperEscaping() {
+        // some lines are still not properly escaped
+        def line = "<<remoteIp=192.35.79.70>><<usertrack=192.35.79.70.1324061914127740>><<time=[16/Dec/2011:22:26:44 +0100]>><<query=?engine=honCodeSearch&q=enuresis%2Bin%2Badults%2B%2528and%2Bchildren%2529%253A%2Breviewed%2B&language=en&action=search>><<referer=http://www.hon.ch/HONcode/Search/search.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&q=enuresis+in+adults+%28and+children%29%3A+reviewed+&sa=Search&lr=lang_en&hl=en&cof=FORID%3A11>>"
+        checkLine(line, "honCodeSearch", "enuresis in adults (and children): reviewed ",
+            "http://www.hon.ch/HONcode/Search/search.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&q=enuresis+in+adults+%28and+children%29%3A+reviewed+&sa=Search&lr=lang_en&hl=en&cof=FORID%3A11"
+            )
+    }
 
 	private void checkLine(String line, String expectedEngine, String expectedOrigQuery, String expectedSource) {
         

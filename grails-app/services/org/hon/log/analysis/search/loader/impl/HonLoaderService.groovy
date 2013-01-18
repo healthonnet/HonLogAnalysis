@@ -8,6 +8,7 @@ import java.util.regex.Pattern
 import org.grails.geoip.service.GeoIpService;
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.loader.SearchLogLineLoaderAbst
+import org.hon.log.analysis.search.util.URLUtil;
 
 
 /**
@@ -78,7 +79,15 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		if (matcher.find()) {
 			def unescapedQuery = matcher.group(1);
            
-			return URLDecoder.decode(unescapedQuery, 'UTF-8').replaceAll(/\+/, " ");
+			def decoded = URLDecoder.decode(unescapedQuery, 'UTF-8');
+            if (engineType == 'honCodeSearch') {
+                // unfortunately, honCodeSearch contains strings that are DOUBLY URL-encoded... and 
+                // not very strict about it.  For instance, '%' might be kept as-is, without being
+                // encoded.  So I have to be lenient in decoding them
+                
+                decoded = URLUtil.decodeLenient(decoded, 'UTF-8');
+            }
+            return decoded;
 		}
 		return null;
 	}
@@ -92,7 +101,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 
 		String rawQuery = myLine2Map.query;
 		String engine = findUrlDecodedIfRegexMatches(patternEngine, rawQuery);
-		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery);
+		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery, engine);
 		
 		Map parsedQuery = parseQuery(myLine2Map.query, engine)
 		

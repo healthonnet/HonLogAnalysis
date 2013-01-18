@@ -153,6 +153,20 @@ select orig_query,count(*) as count
    order by count desc ;
 ```
 
+To get raw queries and their counts based on the number of terms, you can run:
+
+```sql
+select orig_query, count(*) from (select orig_query
+   from search_log_line sll, search_log_line_terms sllt
+   where sllt.search_log_line_id = sll.id
+   group by sll.id having count(sllt.term_id) = 3
+) queries
+group by orig_query having count(*) >= 2
+order by count(*) desc
+```
+
+(to get e.g. all queries with 3 tokens that appear at least twice)
+
 More screenshots
 ----------
 

@@ -77,11 +77,8 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		def matcher = pattern.matcher(input);
 		if (matcher.find()) {
 			def unescapedQuery = matcher.group(1);
-			if ("honCodeSearch".equals(engineType)) {
-				// honCodeSearch is fucked up and url-encoded the query TWICE, just to piss me off - Nolan
-				unescapedQuery = URLDecoder.decode(unescapedQuery, 'UTF-8');
-			}
-			return URLDecoder.decode(unescapedQuery, 'UTF-8');
+           
+			return URLDecoder.decode(unescapedQuery, 'UTF-8').replaceAll(/\+/, " ");
 		}
 		return null;
 	}

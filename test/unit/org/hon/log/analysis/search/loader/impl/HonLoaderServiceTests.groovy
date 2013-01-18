@@ -2,11 +2,10 @@ package org.hon.log.analysis.search.loader.impl
 
 import grails.test.*
 
-import org.hon.log.analysis.search.LoadedFile;
+import org.hon.log.analysis.search.Country
+import org.hon.log.analysis.search.IpAddress
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.query.Term
-import org.hon.log.analysis.search.IpAddress
-import org.hon.log.analysis.search.Country
 
 class HonLoaderServiceTests extends GrailsUnitTestCase {
 	HonLoaderService service = [:]
@@ -96,20 +95,55 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		Term.list().each{println it}
 		assert sll.terms.collect{"$it"}.sort() == ['genitalkrankheiten', 'm' + ((char)0344) + 'nnliche']
 	}
-	
-	void test_problem_lines(){
-		
-		checkLine('<<remoteIp=99.237.143.212>><<usertrack=99.237.143.212.1322781922269303>><<time=[02/Dec/2011:00:25:24 +0100]>><<query=?engine=honSelect&search=Crohn+Disease&action=search>><<referer=http://www.hon.ch/HONselect/RareDiseases/EN/C06.405.205.731.500.html>>')
-		checkLine('<<remoteIp=41.141.213.111>><<usertrack=41.141.213.111.1322862572791662>><<time=[02/Dec/2011:22:49:36 +0100]>><<query=?engine=honSelect&search=Glandes+bulbo-ur%C3%A9trales&EXACT=0&TYPE=1&action=search>><<referer=http://129.195.254.166/cgi-bin/HONselect_f?browse+A05.360.444.123>>')
-	}
+
 	
 	void test_problem_line2() {
 		def line = '<<remoteIp=189.127.148.93>><<usertrack=189.127.148.93.1322251209304264>><<time=[25/Nov/2011:21:00:14 +0100]>><<query=?search=Doen%C3%A7as+do+Sistema+End%C3%B3crino&EXACT=0&TYPE=1&action=search>><<referer=http://www.hon.ch/HONselect/Selection_pt/C19.html>>';
 		
 		service.parseLine(line)
 	}
+    
+    void testIssue1() {
+        
+        // Fixes for GitHub issue 1: https://github.com/healthonnet/HonLogAnalysis/issues/1
+        
+        // honCodeSearch line that causes the error
+        def badLine = "<<remoteIp=88.186.40.171>><<usertrack=->><<time=[18/Apr/2012:22:32:54 +0200]>><<query=?engine=honCodeSearch&q=%25%2Bdes%2Bpatients%2Bsouffrent%2Bde%2Btroubles%2Bpsychique&language=fr&action=search>><<referer=http://www.hon.ch/HONcode/Search/search_f.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&lr=lang_fr&hl=fr&cof=FORID%3A11&q=%+des+patients+souffrent+de+troubles+psychique>>";
+        
+        // honCodeSearch line that works fine
+        def goodLine = "<<remoteIp=41.229.150.82>><<usertrack=41.229.150.82.1327263689308128>><<time=[08/Feb/2012:00:08:57 +0100]>><<query=?engine=honCodeSearch&q=%2B%2B%2Brefus%2Bde%2Bsoins&language=fr&action=search>><<referer=http://www.hon.ch/HONcode/Search/search_f.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&q=+++refus+de+soins&sa=Chercher&lr=lang_fr&hl=fr&cof=FORID%3A11>>"
+        
+        // euhp line, just to check
+        def euhpLine = "<<remoteIp=129.195.199.181>><<usertrack=129.195.199.181.1342697225579459>><<time=[11/Jan/2013:11:07:42 +0100]>><<query=?engine=euhpSearch&q=pillule+generation&facet=%2BdocType%3Ahtml%2Beuportal_site_facet%3Atrue%2Bis_feed_facet%3Atrue&page=null&click=&link=undefined&action=search>><<referer=http://comp.hon.ch/hon-search/?q=pillule%20generation&start=0&fq=docType:html&fq=euportal_site_facet:true&fq=is_feed_facet:true&group.field=domain&overrideQ=&searchLanguage=fr>>"
+        
+        // hon select line, just to check
+        def honSelectLine = "<<remoteIp=190.246.196.206>><<usertrack=->><<time=[15/Jan/2013:13:57:49 +0100]>><<query=?engine=honSelect&search=S%C3%ADndrome+de+Goldenhar&EXACT=0&TYPE=1&action=search>><<referer=http://www.hon.ch/HONselect/RareDiseases/SP/C05.116.099.370.231.576.410.html>>"
+        
+        checkLine(badLine, "honCodeSearch", "% des patients souffrent de troubles psychique",
+            "http://www.hon.ch/HONcode/Search/search_f.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&lr=lang_fr&hl=fr&cof=FORID%3A11&q=%+des+patients+souffrent+de+troubles+psychique"
+            )
+        
+        checkLine(goodLine, "honCodeSearch", "   refus de soins",
+            "http://www.hon.ch/HONcode/Search/search_f.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&q=+++refus+de+soins"
+            )
+        
+        checkLine(euhpLine, "euhpSearch", "pillule generation", 
+            "http://comp.hon.ch/hon-search/?q=pillule%20generation")
+        
+        checkLine(honSelectLine, "honSelect", "S\u00EDndrome de Goldenhar",
+            "http://www.hon.ch/HONselect/RareDiseases/SP/C05.116.099.370.231.576.410.html"
+            )
+    }
 
-	private void checkLine(String str){
-		
+	private void checkLine(String line, String expectedEngine, String expectedOrigQuery, String expectedSource) {
+        
+		SearchLogLine parsedLine = service.parseLine(line)
+        
+        assert parsedLine.engine == expectedEngine
+        assert parsedLine.origQuery == expectedOrigQuery
+        
+        // TODO: why don't we keep track of the damned referer?
+        //assert parsedLine.referer == expectedSource        
+        
 	}	
 }

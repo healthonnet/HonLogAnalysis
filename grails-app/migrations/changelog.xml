@@ -4,4 +4,5 @@
     <include file="001-add-ip-address-locations.xml"/>
     <include file="002-increase-term-value-size.xml"/>
     <include file="003-add-more-indexes.xml"/>
+    <include file="004-add-orig-query-index.xml"/>
 </databaseChangeLog>

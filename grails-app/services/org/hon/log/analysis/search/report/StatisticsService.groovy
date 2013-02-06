@@ -52,13 +52,18 @@ class StatisticsService {
 		// do in sql; it's faster
 		
 		int limit = options.limit?:50
-		
-		String query = """select t.value, count(*) as counter
-                          from term t, search_log_line_terms sllt 
-                          where t.id=sllt.term_id 
-                          group by t.value
-                          order by counter desc
-                          limit ?"""
+        
+		String query = """
+                select t.value, grouped.counter
+                from (
+                    select term_id, count(term_id) as counter
+                    from search_log_line_terms
+                    group by term_id
+                    order by counter desc
+                    limit ?
+                ) grouped
+                join term t on t.id=grouped.term_id
+                """
 
 		def db = new Sql(dataSource)
 		

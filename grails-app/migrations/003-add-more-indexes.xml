@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet author="nolan" id="add-more-indexes">
+		<comment>Add a shit-ton of new indexes because otherwise the queries
+			are super slow.</comment>
+		<createIndex indexName="idx_search_log_line_ip_address"
+			tableName="search_log_line" unique="false">
+			<column name="ip_address_id" />
+		</createIndex>
+		<createIndex indexName="idx_search_log_line_session_id"
+			tableName="search_log_line" unique="false">
+			<column name="session_id" />
+		</createIndex>
+		<createIndex indexName="idx_search_log_line_query_id"
+			tableName="search_log_line" unique="false">
+			<column name="query_id" />
+		</createIndex>
+		<createIndex indexName="idx_search_log_line_engine"
+			tableName="search_log_line" unique="false">
+			<column name="engine" />
+		</createIndex>
+		<createIndex indexName="idx_search_log_line_date"
+			tableName="search_log_line" unique="false">
+			<column name="date" />
+		</createIndex>
+		<createIndex indexName="idx_search_log_line_user_id"
+			tableName="search_log_line" unique="false">
+			<column name="user_id" />
+		</createIndex>
+        <createIndex indexName="idx_search_log_line_language"
+            tableName="search_log_line" unique="false">
+            <column name="language" />
+        </createIndex>
+        <createIndex indexName="idx_search_log_line_nb_terms"
+            tableName="search_log_line" unique="false">
+            <column name="nb_terms" />
+        </createIndex>
+        <createIndex indexName="idx_search_log_line_source"
+            tableName="search_log_line" unique="false">
+            <column name="source" />
+        </createIndex>
+	</changeSet>
+</databaseChangeLog>

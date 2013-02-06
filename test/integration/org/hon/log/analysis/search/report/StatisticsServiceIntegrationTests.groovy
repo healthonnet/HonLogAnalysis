@@ -32,7 +32,7 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 	void test_query_length() {
 		searchLogLoaderService.load('tel', new ClassPathResource('resources/tel-1.txt').file)
 		Map m = statisticsService.countByQueryLength();
-		assert m == [1:3, 2:3, 3:1]
+		assert m == [1:13, 2:8, 3:1]
 	}
 
 	void testMostUserTerms() {

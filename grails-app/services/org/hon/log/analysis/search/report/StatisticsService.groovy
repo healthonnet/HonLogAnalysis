@@ -32,7 +32,7 @@ class StatisticsService {
 	 * @return the total number of queries counted by query length (number of terms)
 	 */
 	Map countByQueryLength() {
-		String query = """select nb_terms,count(distinct orig_query) as counter
+		String query = """select nb_terms,count(id) as counter
                           from search_log_line
                           group by nb_terms 
                           order by nb_terms """

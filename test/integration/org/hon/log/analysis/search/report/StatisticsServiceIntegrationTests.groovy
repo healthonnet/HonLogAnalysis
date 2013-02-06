@@ -61,12 +61,11 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
 		
 		Map m =statisticsService.countByCountry()
 		
-		assert m.size() == 3
+		assert m.size() == 2
 		assert m.totalCount == 96;
-		assert m.ipsCount == 57
-		assert m.countryCodeCounts == [DE:[2, 'Germany'], ES:[4, 'Spain'], US:[27, 'United States'], NO:[8, 'Norway'], 
-			FR:[4, 'France'], BR:[9, 'Brazil'], CA:[10, 'Canada'], MQ:[3, 'Martinique'], VE:[1, 'Venezuela'], 
-			TN:[8, 'Tunisia'], UA:[2, 'Ukraine'], AR:[5, 'Argentina'], EC:[2, 'Ecuador'], MA:[2, 'Morocco'], MX:[3, 'Mexico'], 
-			PT:[1, 'Portugal'], RU:[1, 'Russian Federation'], PE:[3, 'Peru'], PH:[1, 'Philippines']]
+		assert m.countryCodeCounts == [DE:[2, 'Germany'], US:[27, 'United States'], CA:[10, 'Canada'], 
+            ES:[4, 'Spain'], NO:[8, 'Norway'], MA:[2, 'Morocco'], FR:[4, 'France'], AR:[5, 'Argentina'], BR:[9, 'Brazil'], 
+            PT:[1, 'Portugal'], PE:[3, 'Peru'], TN:[8, 'Tunisia'], EC:[2, 'Ecuador'], VE:[1, 'Venezuela'], PH:[1, 'Philippines'], 
+            MQ:[3, 'Martinique'], MX:[3, 'Mexico'], UA:[2, 'Ukraine'], RU:[1, 'Russian Federation']]
 	}
 }

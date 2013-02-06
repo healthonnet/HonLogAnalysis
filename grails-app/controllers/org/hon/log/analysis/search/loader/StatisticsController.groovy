@@ -35,7 +35,6 @@ class StatisticsController extends LogAnalysisControllerAbst {
 		
 		[
 					nbTotal:result.totalCount,
-					nbIp:result.ipsCount,
 					countBy:googleVisualizationDataFromCount(result.countryCodeCounts, [category:'country', label:'country name'])
 				]
 	}

@@ -109,26 +109,30 @@ class StatisticsService {
 		
 		def db = new Sql(dataSource)
 		def query = """
-            select c.country_code, c.country_name, count(*), count(distinct ip.id)
-            from search_log_line sll, ip_address ip, country c
-			where sll.ip_address_id=ip.id  and c.id=ip.country_id
-			group by c.country_code, c.country_name"""
+            select country_code, country_name, sum_ip_counts
+            from (
+                select country_id, sum(ip_count) as sum_ip_counts
+                from (
+                    select ip_address_id, count(ip_address_id) as ip_count
+                    from search_log_line
+                    group by ip_address_id
+                ) grouped
+                join ip_address ip on grouped.ip_address_id = ip.id
+                group by ip.country_id
+            ) grouped2
+            join country c on grouped2.country_id = c.id"""
 		def totalCount = 0;
-		def ipsCount = 0;
 		Map countryCodeCounts=[:]
 
 		db.eachRow(query) { row ->
 			def countryCode = row[0];
 			def countryName = row[1];
 			def logCount = row[2];
-			def ipCount = row[3];
 			
 			countryCodeCounts[countryCode] = [logCount, countryName]
-			ipsCount += ipCount;
 			totalCount += logCount;
 		}
 		[totalCount : totalCount,
-			ipsCount : ipsCount,
 			countryCodeCounts : countryCodeCounts]
 	}
 

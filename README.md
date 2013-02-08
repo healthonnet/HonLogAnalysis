@@ -51,7 +51,12 @@ HON Log Analysis uses a MySQL database to store loaded files, log lines, and que
 
 ```sql
 create database hon_log character set utf8 collate utf8_general_ci;
+create user 'hon_log'@'localhost' identified by 'hon_log';
+grant all on hon_log.* to 'hon_log'@'localhost' identified by 'hon_log';
 ```
+
+All changes to the database are handled by [Liquibase][12] using the [database-migration][13] plugin.
+Place changesets in the ```grails-app/migrations``` folder.
 
 Build instructions
 ----------
@@ -180,3 +185,5 @@ More screenshots
 [4]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot03.png
 [6]: http://www.hon.ch
 [8]: http://www.gnu.org/copyleft/lesser.html
+[12]: http://www.liquibase.org/
+[13]: http://grails.org/plugin/database-migration

@@ -6,4 +6,5 @@
     <include file="003-add-more-indexes.xml"/>
     <include file="004-add-orig-query-index.xml"/>
     <include file="005-add-referer-column.xml"/>
+    <include file="006-add-index-to-referer-column.xml"/>
 </databaseChangeLog>

@@ -39,7 +39,6 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	final Pattern patternEngine = ~/\bengine=([^&]+?)&/
 	final Pattern patternBlock = ~/<<(\w+)=(.*?)>>/
 	final Pattern patternDateCleanup = ~/\s+[\+\-]\d+/
-	final Pattern patternReferer = ~/referer=([^>&]+?)[>|&]/
 	
 	// DateFormat is not threadsafe
 	final ThreadLocal<DateFormat> localDateFormat = new ThreadLocal<DateFormat>(){
@@ -104,7 +103,6 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		String engine = findUrlDecodedIfRegexMatches(patternEngine, rawQuery);
 		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery, engine);
 		Map parsedQuery = parseQuery(myLine2Map.query, engine)
-		String referer = findUrlDecodedIfRegexMatches(patternReferer, line)
 			
 		def searchLogLine = new SearchLogLine(
 				source:source,

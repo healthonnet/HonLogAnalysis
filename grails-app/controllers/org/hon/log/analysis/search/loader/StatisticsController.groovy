@@ -39,6 +39,14 @@ class StatisticsController extends LogAnalysisControllerAbst {
 				]
 	}
 
+	def countByReferer = {
+		Map result = statisticsService.countByReferer()
+		[
+			nbTotal:result.totalCount,
+			countBy:googleVisualizationDataFromCount(result.refererCounts, [category:'referer'])
+			]	 	
+	}
+
 	def mostUsedTerms = {
 		[	
 			countBy:googleVisualizationDataFromCount(statisticsService.mostUsedTerms(), [category:'terms']),

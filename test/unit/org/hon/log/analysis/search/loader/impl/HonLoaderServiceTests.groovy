@@ -124,11 +124,12 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
             )
         
         checkLine(goodLine, "honCodeSearch", "   refus de soins",
-            "http://www.hon.ch/HONcode/Search/search_f.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&q=+++refus+de+soins"
+            "http://www.hon.ch/HONcode/Search/search_f.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&q=+++refus+de+soins&sa=Chercher&lr=lang_fr&hl=fr&cof=FORID%3A11"
             )
         
         checkLine(euhpLine, "euhpSearch", "pillule generation", 
-            "http://comp.hon.ch/hon-search/?q=pillule%20generation")
+            "http://comp.hon.ch/hon-search/?q=pillule%20generation&start=0&fq=docType:html&fq=euportal_site_facet:true&fq=is_feed_facet:true&group.field=domain&overrideQ=&searchLanguage=fr"
+			)
         
         checkLine(honSelectLine, "honSelect", "S\u00EDndrome de Goldenhar",
             "http://www.hon.ch/HONselect/RareDiseases/SP/C05.116.099.370.231.576.410.html"
@@ -143,15 +144,12 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
             )
     }
 
-	private void checkLine(String line, String expectedEngine, String expectedOrigQuery, String expectedSource) {
+	private void checkLine(String line, String expectedEngine, String expectedOrigQuery, String expectedSource){
         
 		SearchLogLine parsedLine = service.parseLine(line)
         
         assert parsedLine.engine == expectedEngine
         assert parsedLine.origQuery == expectedOrigQuery
-        
-        // TODO: why don't we keep track of the damned referer?
-        //assert parsedLine.referer == expectedSource        
-        
+        assert parsedLine.referer == expectedSource        
 	}	
 }

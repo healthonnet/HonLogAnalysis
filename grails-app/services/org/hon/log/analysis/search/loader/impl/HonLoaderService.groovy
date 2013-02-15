@@ -39,6 +39,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	final Pattern patternEngine = ~/\bengine=([^&]+?)&/
 	final Pattern patternBlock = ~/<<(\w+)=(.*?)>>/
 	final Pattern patternDateCleanup = ~/\s+[\+\-]\d+/
+	final Pattern patternReferer = ~/referer=([^>&]+?)[>|&]/
 	
 	// DateFormat is not threadsafe
 	final ThreadLocal<DateFormat> localDateFormat = new ThreadLocal<DateFormat>(){
@@ -48,8 +49,6 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		}
 	};
 	
-	
-
 	@Override
 	public void init(Map options) {
 	}
@@ -77,21 +76,23 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	private String findUrlDecodedIfRegexMatches(Pattern pattern, String input, String engineType) {
 		def matcher = pattern.matcher(input);
 		if (matcher.find()) {
-			def unescapedQuery = matcher.group(1);
-           
-			def decoded = URLDecoder.decode(unescapedQuery, 'UTF-8');
-            if (engineType == 'honCodeSearch') {
-                // unfortunately, honCodeSearch contains strings that are DOUBLY URL-encoded... and 
-                // not very strict about it.  For instance, '%' might be kept as-is, without being
-                // encoded.  So I have to be lenient in decoding them
-                
-                decoded = URLUtil.decodeLenient(decoded, 'UTF-8');
-            }
-            return decoded;
+			String unescapedString = matcher.group(1)
+			return decodeString(unescapedString, engineType)
 		}
 		return null;
 	}
 
+	private String decodeString(String input, String engineType){
+		def decoded = URLDecoder.decode(input, 'UTF-8')
+		if (engineType == 'honCodeSearch') {
+			// unfortunately, honCodeSearch contains strings that are DOUBLY URL-encoded... and
+			// not very strict about it.  For instance, '%' might be kept as-is, without being
+			// encoded.  So I have to be lenient in decoding them
+			decoded = URLUtil.decodeLenient(decoded, 'UTF-8')
+		}
+		return decoded;
+	}
+	
 	@Override
 	public SearchLogLine parseLine(String line) {
 		Map myLine2Map = line2Map(line)
@@ -102,9 +103,9 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		String rawQuery = myLine2Map.query;
 		String engine = findUrlDecodedIfRegexMatches(patternEngine, rawQuery);
 		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery, engine);
-		
 		Map parsedQuery = parseQuery(myLine2Map.query, engine)
-		
+		String referer = findUrlDecodedIfRegexMatches(patternReferer, line)
+			
 		def searchLogLine = new SearchLogLine(
 				source:source,
 				sessionId:myLine2Map.usertrack,
@@ -112,7 +113,8 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 				date: date,
 				termList:parsedQuery.terms,
 				origQuery:query,
-				engine : engine,
+				engine: engine,
+				referer:myLine2Map.referer,
 				)
 		
 		associateSearchLogLineWithRemoteIp(searchLogLine, myLine2Map.remoteIp);

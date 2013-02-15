@@ -140,5 +140,40 @@ class StatisticsService {
 		[totalCount : totalCount,
 			countryCodeCounts : countryCodeCounts]
 	}
+	
+	Map countByReferer(options=[:]){
+		int limit = options?.limit?:10
+		
+		//if count(*) is used, it is also shown the number of queries with referer = NULL
+		//TODO: Determine weather it is better to use count(referer) or not.
+		def query = """
+			select referer, count(referer) as counter
+			from search_log_line
+			where referer is not null
+			group by referer
+			order by counter desc
+			"""
+		def totalCount = 0
+		
+		def db = new Sql(dataSource)
+		Map refererCounts = [:]
+		db.eachRow(query) { row ->
+			def refererName = row[0]
+			refererCounts[refererName] = row[1]
+			totalCount += row[1]
+		}
+		
+		//Sort the map by value to drop the not used entries
+		Map sortedRefererCount = refererCounts.sort {it.value}
+		int mapSize = sortedRefererCount.size()
+		if (mapSize > limit) {
+			sortedRefererCount = sortedRefererCount.drop(mapSize - limit)	
+		}
+		
+		//Sort the map by value again, but this time in reverse order
+		sortedRefererCount = sortedRefererCount.sort {a, b -> b.value <=> a.value}
+		
+		return [totalCount:totalCount, refererCounts:sortedRefererCount]
+	}
 
 }

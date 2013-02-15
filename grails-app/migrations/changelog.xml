@@ -5,4 +5,5 @@
     <include file="002-increase-term-value-size.xml"/>
     <include file="003-add-more-indexes.xml"/>
     <include file="004-add-orig-query-index.xml"/>
+    <include file="005-add-referer-column.xml"/>
 </databaseChangeLog>

@@ -18,6 +18,7 @@ class SearchLogLine {
 	String engine
 	LoadedFile loadedFile
 	IpAddress ipAddress
+	String referer
 	
 	static belongsTo = [loadedFile: LoadedFile,ipAddress: IpAddress]	
 	static hasMany = [terms:Term]
@@ -31,7 +32,6 @@ class SearchLogLine {
 		columnTitles: ['date': 'Date', 'origQuery': 'Original Query', 'terms':'Terms','nbTerms': 'Nb. of terms'],
 		groupColumns: ['date'],
 		autoTexts: [new AutoText(AutoText.AUTOTEXT_PAGE_X_OF_Y, AutoText.POSITION_FOOTER, HorizontalBandAlignment.buildAligment(AutoText.ALIGMENT_CENTER), (byte)0, 200, 200)]
-		
 ]
 	
 	
@@ -56,6 +56,7 @@ class SearchLogLine {
 		topics nullable:true
 		language nullable:true
 		engine nullable:true
+		referer nullable:true
 		origQuery(maxSize:1000)
 	}
 	

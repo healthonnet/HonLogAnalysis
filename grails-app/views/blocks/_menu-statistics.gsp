@@ -7,5 +7,6 @@
             <option value="mostUsedTerms">most used terms</option>
             <option value="countriesByTerm">countries by term</option>
             <option value="mostFrequentTermCoOccurence">term co-occurence</option>
+            <option value="countByReferer">count by referer</option>
 		</select>
 </g:form>

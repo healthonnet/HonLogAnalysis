@@ -81,7 +81,7 @@ class SearchLogLoaderController {
 
 		def f = request.getFile('logfile')
 		if(!f.empty) {
-			File ftmp =File.createTempFile("loglines", '.log')
+			File ftmp = File.createTempFile("loglines", '.log')
 			f.transferTo( ftmp)
 			int n = searchLogLoaderService.load(params.type, ftmp, [origFile:f.originalFilename])
 			ftmp.delete()
@@ -94,13 +94,14 @@ class SearchLogLoaderController {
 	}
 
 	def delete = {
-		LoadedFile lf =LoadedFile.findById(params.id)
-		int n = lf.size()
-		String fname = lf.filename
-
-		lf.delete()
-
-		flash.message="deleted $fname ($n)"
+		Map r = searchLogLoaderService.deleteById(params.id.toLong())
+		flash.message = "deleted $r.filename ($r.deleted)"
+		redirect (action:'index')
+	}
+	
+	def deleteAll = {
+		int deletedRows = searchLogLoaderService.deleteAll()
+		flash.message = "Deleted $deletedRows rows"
 		redirect (action:'index')
 	}
 }

@@ -20,3 +20,5 @@
 	   </g:each>
 	</tbody>
 </table>
+
+<h3> <g:link action="deleteAll"> Delete all files</g:link> </h3>

@@ -48,7 +48,7 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 		assert n == 11
 		assert SearchLogLine.count() == 11
 
-		LoadedFile loadedfile =LoadedFile.findByFilename('dbs-1.txt')
+		LoadedFile loadedfile = LoadedFile.findByFilename('dbs-1.txt')
 		assert loadedfile
 		assert loadedfile.size() == 11
 
@@ -82,11 +82,50 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 		SearchLogLine.findAll().each() { searchLogLine ->
 			assert searchLogLine.terms.size() == 2;
 		}
-		
 	}
 
+	void testDeleteById(){
+		
+		int nHon = searchLogLoaderService.load('hon', testFile('hon-1.txt'))
+		int nTel = searchLogLoaderService.load('tel', testFile('tel-1.txt'))
+		
+		List lf = LoadedFile.list();
+		assert lf.size() == 2
+		LoadedFile f = lf[0]
+
+		Map result = searchLogLoaderService.deleteById(f.id)
+		assert result.filename.endsWith('hon-1.txt')
+		assert result.deleted == nHon
+		
+		//Try to delete the same file twice
+		Map result2 = searchLogLoaderService.deleteById(f.id)
+		assert result2.deleted == 0
+		
+		//load the file list again and check if it decrease its size
+		List lf2 = LoadedFile.list();
+		assert lf2.size() == 1
+	}
+	
+	void testDeleteAll(){
+		
+		searchLogLoaderService.load('hon', testFile('hon-1.txt'))
+		searchLogLoaderService.load('tel', testFile('tel-1.txt'))
+		searchLogLoaderService.load('tel', testFile('dbs-1.txt'))
+		
+		//Check if the files are loaded
+		List lf = LoadedFile.list();
+		assert lf.size() == 3
+		
+		int numberOfDeleted = searchLogLoaderService.deleteAll()
+		assert numberOfDeleted == 3
+		
+		//check if the files were deleted
+		List lfAfter = LoadedFile.list();
+		assert lfAfter.size() == 0
+		
+	}
+	
 	File testFile(String filename){
 		new ClassPathResource('resources/'+filename).file
 	}
-
 }

@@ -7,7 +7,7 @@ class LoadedFile {
 		int size(){
 			searchLogLines?.size()?:0
 		}
-
+    
     static constraints = {
     }
 	

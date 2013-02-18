@@ -49,10 +49,7 @@ class SearchLogLoaderService implements InitializingBean{
 				loadedAt : row[2],
 				size : row[3]
 				)
-			
-			
 			}
-		
 	}
 	
 	/**
@@ -138,5 +135,47 @@ class SearchLogLoaderService implements InitializingBean{
 			name, srv ->
 			loaders[srv.source] = srv;
 		}
+	}
+	
+	public Map deleteById(long id){
+
+		FlushMode flushMode = sessionFactory.currentSession.getFlushMode();
+		sessionFactory.currentSession.setFlushMode(FlushMode.MANUAL); 
+		
+		LoadedFile lf = LoadedFile.findById(id)
+		if(!lf){
+			return [filename:"File already deleted", deleted:0]
+		}
+		
+		int n = lf.size()
+		String fname = lf.filename
+		lf.delete()
+		
+		//flush up and clear
+		cleanUpGorm()
+
+		sessionFactory.currentSession.setFlushMode(flushMode);
+		return [filename:fname, deleted:n]
+	}
+	
+	public int deleteAll(){
+		/*
+		 * The actual version of Grails does not supply a deleteAll method.
+		 * The documentation recommends executeUpdate to deleteAll rows in a table.
+		 * See: http://www.grails.org/doc/latest/guide/single.html#5.3.2%20Deleting%20Objects
+		*/
+		
+		FlushMode flushMode = sessionFactory.currentSession.getFlushMode();
+		sessionFactory.currentSession.setFlushMode(FlushMode.MANUAL);
+		
+		ArrayList allRows = LoadedFile.all
+		int deletedRows = allRows.size()
+		allRows.each {it.delete()}
+		
+		//flush up and clear
+		cleanUpGorm()
+		
+		sessionFactory.currentSession.setFlushMode(flushMode);
+		return deletedRows
 	}
 }

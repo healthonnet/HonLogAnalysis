@@ -4,21 +4,16 @@
         <title><g:layoutTitle default="search logs analyzer" /></title>
         <link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
         <link rel="shortcut icon" href="${resource(dir:'images',file:'favicon.ico')}" type="image/x-icon" />
-        <g:javascript library="jquery" plugin="jquery"/>
-        <r:require module="jquery-ui"/>
-        <r:require module="blueprint"/>
-        <r:layoutResources/>
-        
-        
-        <script src="${g.resource(dir:'js/jquery-ui', file:'ui.selectmenu.js')}"></script>
-        <link href="${g.resource(dir:'css/jquery-ui', file:'ui.selectmenu.css')}" type="text/css" rel="stylesheet" />
+
         <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-        
+
         <g:layoutHead />
+
+        <r:require modules="core"/>
+        <r:layoutResources/>
         
     </head>
     <body>
-          <r:layoutResources/>
     
         <div class="span-24">
             <div class="span-5">
@@ -36,12 +31,19 @@
         <div  class="span-24">
         <g:layoutBody />
         </div>
-        
-        <jq:jquery>
-            $('select.menu').selectmenu({style:'dropdown'});
-            $('select.menu').change(function(){
-                $(this).parent().submit();
-            });
-        </jq:jquery>
+
+        <div class="footer span-24">
+            <a href='http://github.com/healthonnet/HonLogAnalysis' target='_blank'>HON Log Analysis</a> version
+            <g:meta name="app.version" />, built on <a href='http://grails.org' target='_blank'>Grails</a>
+            <g:meta name="app.grails.version" />. <a href='http://www.hon.ch/Global/privacy_policy.html'
+                 target='_blank'>See our privacy policy.</a>
+        </div>
+
+
+        <r:require modules="core"/>
+        <r:layoutResources/>
+
+
+
     </body>
 </html>

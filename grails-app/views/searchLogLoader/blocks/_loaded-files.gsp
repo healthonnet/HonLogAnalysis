@@ -4,9 +4,9 @@
 	<thead>
 		<tr>
             <th></th>
-            <th class="left">file name</th>
-            <th>size</th>
-            <th class="left">date</th>
+            <th>File name</th>
+            <th style="text-align: center;">Size</th>
+            <th>Date</th>
 		</tr>
 	</thead>
 	<tbody>

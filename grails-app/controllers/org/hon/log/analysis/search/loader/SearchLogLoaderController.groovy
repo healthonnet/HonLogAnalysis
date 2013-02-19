@@ -27,25 +27,33 @@ class SearchLogLoaderController {
 	def bulkLoad = {
 		def filedir = params.filedir?: grailsApplication.config.honlogDefault.filedir;
 		def filter = params.filter ?: grailsApplication.config.honlogDefault.filter;
-		
+
 		if (params.doAction) {
+            def out = new PrintStream(new BufferedOutputStream(response.outputStream));
+
 			File directory = new File(filedir);
-			
+
 			if (!directory?.isDirectory()) {
-				return [output : "Directory '$filedir' not found."];
+                logAndPrint("not a valid directory: $directory", out);
+                return;
 			}
 			
 			int lineCount = 0;
 			int fileCount = 0;
 			Map<String,Object> displayResults = new TreeMap<String, Object>();
 			long startTime = System.currentTimeMillis();
-			
+
+            def files = directory.listFiles();
+
 			// iterate through each file in the directory and analyze it
-			for (File file : directory.listFiles()) {
+            logAndPrint("Preparing to load ${files.length} files...", out);
+
+			for (File file : files) {
 				if (file.isDirectory()) {
+                    logAndPrint("${file.getName()}: is directory", out);
 					continue;
 				} else if (LoadedFile.findByFilename(file.getName())) { // already analyzed
-					displayResults.put([file.getName(), "already loaded"]);
+                    logAndPrint("${file.getName()}: already loaded", out);
 					continue;
 				}
 				// hard code 'hon' style logs for now
@@ -54,25 +62,22 @@ class SearchLogLoaderController {
 					filter : filter
 					];
 				int currentLineCount = searchLogLoaderService.load('hon', file, options);
-				
+
+                logAndPrint("${file.getName()}: loaded $currentLineCount lines", out);
+
 				lineCount += currentLineCount;
 				fileCount++;
-				displayResults.put([file.getName(), currentLineCount]);
 			}
 			
 			long totalTime = System.currentTimeMillis() - startTime;
-			
-			// show some meaningful display to the user
-			def displayOutput = new StringBuilder("Loaded $lineCount lines in $fileCount files in $totalTime ms.");
-			for (Map.Entry<String,Integer> entry : displayResults.entrySet()) {
-				String filename = entry.getKey();
-				String count = entry.getValue();
-				displayOutput.append("\n$filename: $count");
-			}
-			return [output : displayOutput]
+
+            logAndPrint("Loaded $lineCount lines in $fileCount files in $totalTime ms.", out)
+
+            out.close();
 		} else {
-			return [output : null] 
-		}
+            return [:];
+        }
+
 	}
 	
 	def upload = {
@@ -104,4 +109,10 @@ class SearchLogLoaderController {
 		flash.message = "Deleted $deletedRows rows"
 		redirect (action:'index')
 	}
+
+    def logAndPrint(string, out) {
+        log.info(string);
+        out.println(string)
+        out.flush();
+    }
 }

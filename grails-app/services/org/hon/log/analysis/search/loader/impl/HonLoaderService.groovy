@@ -4,12 +4,12 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Map
 import java.util.regex.Pattern
+import java.util.Date;
 
 import org.grails.geoip.service.GeoIpService;
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.loader.SearchLogLineLoaderAbst
 import org.hon.log.analysis.search.util.URLUtil;
-
 
 /**
  * Analyzer for HON-style log lines.  Accepts logs in a format given by files such as znverdi.honsearch_log.20120325.
@@ -39,6 +39,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	final Pattern patternEngine = ~/\bengine=([^&]+?)&/
 	final Pattern patternBlock = ~/<<(\w+)=(.*?)>>/
 	final Pattern patternDateCleanup = ~/\s+[\+\-]\d+/
+	def sessionsMap = [:]
 	
 	// DateFormat is not threadsafe
 	final ThreadLocal<DateFormat> localDateFormat = new ThreadLocal<DateFormat>(){
@@ -108,7 +109,6 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		
 		def searchLogLine = new SearchLogLine(
 				source:source,
-				sessionId:myLine2Map.usertrack,
 				userId:myLine2Map.usertrack,
 				date: date,
 				termList:parsedQuery.terms,
@@ -116,12 +116,40 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 				engine: engine,
 				referer:referer,
 				)
-		
 		associateSearchLogLineWithRemoteIp(searchLogLine, myLine2Map.remoteIp);
+		associateSearchLogLineWithSessionId(searchLogLine)
 		
 		return searchLogLine
 	}
+	
+	// SessionLength is usually 30 minutes (1800000 ms)
+	private boolean isTheSameSession(Date a, Date b, long sessionLength = 1800000){
+		return  (Math.max(a.getTime(), b.getTime()) - Math.min(a.getTime(), b.getTime()) <= 1800000)
+	}
+	
+	private void associateSearchLogLineWithSessionId(SearchLogLine searchLogLine) {
+		
+		long uid = searchLogLine.ipAddress.id
+		long sessionId = 1
 
+		if ( !sessionsMap.containsKey(uid) ){ 
+			sessionsMap[uid] = ['date':searchLogLine.date, 'sessionId':sessionId]
+		}
+		else{
+			def sMap = sessionsMap[uid]
+			Date date = (Date) sMap['date']
+			long sId = sMap['sessionId']
+			if (isTheSameSession(searchLogLine.date, date)){
+				sessionId = sId
+			}
+			else{ 
+				sessionsMap[uid] = ['date':searchLogLine.date, 'sessionId':(sId + 1)]
+				sessionId = sId + 1
+			}	
+		}
+		searchLogLine.sessionId = uid + "." + sessionId.toString()
+	}
+	
 	/**
 	 * convert each <<name=value>> from the line into map element
 	 * @param line

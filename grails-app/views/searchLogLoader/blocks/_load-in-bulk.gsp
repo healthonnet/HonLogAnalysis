@@ -1,6 +1,6 @@
 <h2>Load files in bulk</h2>
 <fieldset class="form">
-	<g:form action="bulkLoad" method="GET">
+	<g:form action="bulkLoad" method="GET" class="bulk-load-form">
 		<div class="fieldcontain">
 			<label for="filedir">Enter local directory containing log files (default: ${grailsApplication.config.honlogDefault.filedir}):</label>
 			<g:textField name="filedir" value="${params.filedir}" />
@@ -11,6 +11,3 @@
 		</div>
 	</g:form>
 </fieldset>
-<pre>
-	${output}
-</pre>

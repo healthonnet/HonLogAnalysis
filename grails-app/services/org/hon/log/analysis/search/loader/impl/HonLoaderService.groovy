@@ -103,8 +103,6 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		String engine = findUrlDecodedIfRegexMatches(patternEngine, rawQuery);
 		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery, engine);
 		Map parsedQuery = parseQuery(myLine2Map.query, engine)
-		// A static (and large) limit for the referer
-		String referer = myLine2Map.referer.size() > 2048 ? myLine2Map.referer[0..2047] : myLine2Map.referer 
 			
 		def searchLogLine = new SearchLogLine(
 				source:source,
@@ -114,7 +112,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 				termList:parsedQuery.terms,
 				origQuery:query,
 				engine: engine,
-				referer:referer,
+				referer:myLine2Map.referer,
 				)
 		
 		associateSearchLogLineWithRemoteIp(searchLogLine, myLine2Map.remoteIp);

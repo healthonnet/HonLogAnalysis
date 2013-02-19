@@ -7,5 +7,4 @@
     <include file="004-add-orig-query-index.xml"/>
     <include file="005-add-referer-column.xml"/>
     <include file="006-add-index-to-referer-column.xml"/>
-    <include file="007-increase-referer-value-size.xml"/>
 </databaseChangeLog>

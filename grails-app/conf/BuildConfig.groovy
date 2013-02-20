@@ -51,6 +51,11 @@ grails.project.dependency.resolution = {
         runtime ':jquery-json:2.2.2'
         runtime ':jquery-ui:1.8.15'
         runtime ':jqueryui-widget:0.1.4.1'
-        runtime  ':resources:1.1.1'
+
+        runtime  ':resources:1.1.6'
+
+        runtime ":zipped-resources:1.0"
+        runtime ":cached-resources:1.0"
+        runtime ":yui-minify-resources:0.1.5"
     }
 }

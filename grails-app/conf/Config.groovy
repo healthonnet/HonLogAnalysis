@@ -63,6 +63,12 @@ grails.exceptionresolver.params.exclude = ['password']
 
 grails.plugin.databasemigration.updateOnStartFileNames = ['changelog.xml']
 
+//
+// YUI Minify Resources plugin config
+//
+grails.resources.mappers.yuijsminify.noMunge = true // this is actually backwards, and should be called "munge"
+grails.resources.mappers.yuijsminify.preserveAllSemicolons = false
+grails.resources.mappers.yuijsminify.disableOptimizations = false
 
 // set per-environment serverURL stem for creating absolute links
 
@@ -76,6 +82,7 @@ environments {
 				]
 				    }
     development {
+        grails.resources.debug = true
 		geoip.data.resource= "/../src/groovy/GeoLiteCity.dat"
 		grails.plugin.databasemigration.updateOnStart = true // run the database migrations automatically
         grails.serverURL = "http://localhost:8080/${appName}"

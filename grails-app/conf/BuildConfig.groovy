@@ -27,12 +27,7 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
         runtime 'mysql:mysql-connector-java:5.1.13'
-		
-		
-		// it sucks, but I have to manually include the IpAddressToLocationCustomSqlChange.groovy here
-		// or else the migration plugin doesn't work in development mode
-        //compile 'ip-address-to-location-custom-sql-change:ip-address-to-location-custom-sql-change:1.0'
-		
+
         test    "hsqldb:hsqldb:1.8.0.10"
     }
     

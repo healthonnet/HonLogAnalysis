@@ -2,7 +2,7 @@
 modules = {
 
     core {
-        dependsOn 'blueprint,jquery,jquery-ui,select-menu,blueprint'
+        dependsOn 'blueprint,jquery,jquery-ui,select-menu,blueprint,pastel-24'
 
         resource url : '/js/hon-log/hon-log.js'
         resource url : '/css/hon-log/hon-log.css'
@@ -13,5 +13,9 @@ modules = {
 
         resource url : '/js/jquery-ui/ui.selectmenu.js', disposition : 'head'
         resource url : '/css/jquery-ui/ui.selectmenu.css', disposition : 'head'
+    }
+
+    'pastel-24' {
+        resource url : '/css/pastel/pastel-24.css'
     }
 }

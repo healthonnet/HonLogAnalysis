@@ -7,6 +7,7 @@ Developers
 - William Belle
 - Nolan Lawson
 - Alexandre Masselot
+- João Palotti
 - Daniela Sinjari
 
 [Health On the Net Foundation][6]
@@ -179,6 +180,11 @@ More screenshots
 
 ![Screenshot][4]
 
+Third-party credits
+-------------------
+
+Thanks to [Pastel SVG Icons][14] for the graphics.
+
 [1]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/multi_upload_screenshot.png
 [2]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot01.png
 [3]: https://raw.github.com/healthonnet/HonLogAnalysis/master/doc/screenshot02.png
@@ -187,3 +193,5 @@ More screenshots
 [8]: http://www.gnu.org/copyleft/lesser.html
 [12]: http://www.liquibase.org/
 [13]: http://grails.org/plugin/database-migration
+[14]: http://codefisher.org/pastel-svg/
+[15]: http://famfamfam.com/

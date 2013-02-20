@@ -48,25 +48,26 @@ class SearchLogLoaderController {
 			// iterate through each file in the directory and analyze it
             logAndPrint("Preparing to load ${files.length} files...", out);
 
-			for (File file : files) {
+			for (int i = 0; i < files.length; i++) {
+                File file = files[i];
 				if (file.isDirectory()) {
                     logAndPrint("${file.getName()}: is directory", out);
-					continue;
 				} else if (LoadedFile.findByFilename(file.getName())) { // already analyzed
                     logAndPrint("${file.getName()}: already loaded", out);
-					continue;
-				}
-				// hard code 'hon' style logs for now
-				def options = [
-					origFile : file.getName(),
-					filter : filter
-					];
-				int currentLineCount = searchLogLoaderService.load('hon', file, options);
+				} else {
+                    // hard code 'hon' style logs for now
+                    def options = [
+                        origFile : file.getName(),
+                        filter : filter
+                        ];
+                    int currentLineCount = searchLogLoaderService.load('hon', file, options);
 
-                logAndPrint("${file.getName()}: loaded $currentLineCount lines", out);
+                    logAndPrint("${file.getName()}: loaded $currentLineCount lines", out);
 
-				lineCount += currentLineCount;
-				fileCount++;
+                    lineCount += currentLineCount;
+                    fileCount++;
+                }
+                logAndPrint("  > Progress: ${Math.round(100 * (i + 1) / files.length)}%", out);
 			}
 			
 			long totalTime = System.currentTimeMillis() - startTime;

@@ -59,3 +59,12 @@ a:hover {
 .ui-selectmenu-status {
     margin-left : 24px;
 }
+
+.iframe-container {
+    text-align: center;
+}
+
+.iframe {
+    border:1px solid #ddd;
+    margin:20px auto;
+}

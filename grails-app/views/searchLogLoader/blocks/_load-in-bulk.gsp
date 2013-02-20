@@ -10,4 +10,12 @@
 			<br/><input type="submit" name="doAction" value="Do It!" />
 		</div>
 	</g:form>
+    <div class="iframe-container" style="text-align:center;">
+    <iframe class="iframe" id="bulk-load-frame" src="" width="90%" height="200" style="display:none;"></iframe>
+    </div>
 </fieldset>
+<r:script>
+(function($){
+    HonLog.bulkLoad();
+})(jQuery);
+</r:script>

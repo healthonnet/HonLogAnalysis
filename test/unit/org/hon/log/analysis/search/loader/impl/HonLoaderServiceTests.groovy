@@ -1,5 +1,8 @@
 package org.hon.log.analysis.search.loader.impl
 
+import java.text.SimpleDateFormat
+import java.util.Date;
+
 import grails.test.*
 
 import org.hon.log.analysis.search.Country
@@ -152,4 +155,27 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
         assert parsedLine.origQuery == expectedOrigQuery
         assert parsedLine.referer == expectedSource        
 	}	
+	
+	void testIsTheSameSession(){
+		
+		String dateA1Str = '14/Jan/1987:00:10:00' // First query in the session
+		String dateA2Str = '14/Jan/1987:00:30:00' // 20 minutes later
+		String dateA3Str = '14/Jan/1987:01:00:00' // 30 minutes later
+		String dateA4Str = '14/Jan/1987:01:30:01' // 30 minutes and 1 second later
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss");
+		
+		Date A1 = (Date) formatter.parse(dateA1Str)
+		Date A2 = (Date) formatter.parse(dateA2Str)
+		Date A3 = (Date) formatter.parse(dateA3Str)
+		Date A4 = (Date) formatter.parse(dateA4Str)
+		
+		assert service.isTheSameSession(A1, A2) == true
+		assert service.isTheSameSession(A2, A3) == true
+		assert service.isTheSameSession(A3, A4) == false
+		assert service.isTheSameSession(A3, A4, 1801000) == true
+		assert service.isTheSameSession(A1, A3) == false
+		assert service.isTheSameSession(A1, A4) == false
+		assert service.isTheSameSession(A2, A4) == false
+	}
 }

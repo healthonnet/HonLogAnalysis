@@ -69,7 +69,6 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 		assert SearchLogLine.count() == 96
 	}
 	
-	
 	void testNoDuplicateTerms() {
 		
 		// test to make sure terms aren't added more than once for the same string
@@ -127,5 +126,16 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 	
 	File testFile(String filename){
 		new ClassPathResource('resources/'+filename).file
+	}
+	
+	void testSessions(){	
+		searchLogLoaderService.load('hon', testFile('hon-session.txt'))
+		List lf = SearchLogLine.list()
+		assert lf[0].sessionId == lf[1].sessionId
+		assert lf[1].sessionId == lf[2].sessionId
+		assert lf[2].sessionId == lf[3].sessionId
+		assert lf[3].sessionId != lf[4].sessionId
+		assert lf[4].sessionId != lf[5].sessionId
+		assert lf[3].sessionId != lf[5].sessionId		
 	}
 }

@@ -124,14 +124,15 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	
 	// SessionLength is usually 30 minutes (1800000 ms)
 	private boolean isTheSameSession(Date a, Date b, long sessionLength = 1800000){
-		return  (Math.max(a.getTime(), b.getTime()) - Math.min(a.getTime(), b.getTime()) <= 1800000)
+		return  (Math.max(a.getTime(), b.getTime()) - Math.min(a.getTime(), b.getTime()) <= sessionLength)
 	}
 	
 	private void associateSearchLogLineWithSessionId(SearchLogLine searchLogLine) {
 		
 		long uid = searchLogLine.ipAddress.id
 		long sessionId = 1
-
+		
+		//TODO: the sessionMap should be cleared before we start the load process. Check if it is possible.
 		if ( !sessionsMap.containsKey(uid) ){ 
 			sessionsMap[uid] = ['date':searchLogLine.date, 'sessionId':sessionId]
 		}

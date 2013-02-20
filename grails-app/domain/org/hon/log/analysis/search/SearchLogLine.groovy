@@ -68,6 +68,6 @@ class SearchLogLine {
 	
 	
 	String toString(){
-		"$id\t$userId\t$terms\t$topics\t$origQuery"
+		"$id\t$userId\t$terms\t$topics\t$origQuery\t$sessionId"
 	}
 }

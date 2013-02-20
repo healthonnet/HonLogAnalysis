@@ -67,7 +67,7 @@ class SearchLogLoaderController {
                     lineCount += currentLineCount;
                     fileCount++;
                 }
-                logAndPrint("  > Progress: ${Math.round(100 * (i + 1) / files.length)}%", out);
+                logAndPrint("  > Progress: ${Math.round(10000 * (i + 1) / files.length)/100F}%", out);
 			}
 			
 			long totalTime = System.currentTimeMillis() - startTime;

@@ -48,7 +48,7 @@ grails.project.dependency.resolution = {
         runtime ':blueprint-jquery-ui:0.2.0'
         runtime ':dynamic-jasper:0.6'
         runtime ':geoip:0.2'
-        runtime ':google-visualization:0.4.2'
+        runtime ':google-visualization:0.6.1'
         
         runtime ':jasper:1.2.2'
         runtime ':jquery:1.6.1.1'

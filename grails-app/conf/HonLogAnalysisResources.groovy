@@ -5,7 +5,7 @@ modules = {
 
         dependsOn 'blueprint,jquery,jquery-ui,select-menu,blueprint,pastel-24'
 
-        defaultBundle 'single-bundle'
+        defaultBundle 'core-bundle'
 
         resource url : '/js/hon-log/hon-log.js'
         resource url : '/css/hon-log/hon-log.css'
@@ -15,7 +15,7 @@ modules = {
 
         dependsOn 'jquery,jquery-ui'
 
-        defaultBundle 'single-bundle'
+        defaultBundle 'third-party-bundle'
 
         resource url : '/js/jquery-ui/ui.selectmenu.js', disposition : 'head'
         resource url : '/css/jquery-ui/ui.selectmenu.css', disposition : 'head'
@@ -23,7 +23,7 @@ modules = {
 
     'pastel-24' {
 
-        defaultBundle 'single-bundle'
+        defaultBundle 'third-party-bundle'
 
         resource url : '/css/pastel/pastel-24.css'
     }
@@ -31,27 +31,27 @@ modules = {
     overrides {
 
         jquery {
-            defaultBundle 'single-bundle'
-            resource id:'js', bundle: 'single-bundle'
+            defaultBundle 'third-party-bundle'
+            resource id:'js', bundle: 'third-party-bundle'
         }
 
         'jquery-theme' {
-            defaultBundle 'single-bundle'
+            defaultBundle 'third-party-bundle'
 
-            resource id:'theme', bundle : 'single-bundle'
+            resource id:'theme', bundle : 'third-party-bundle'
         }
 
         'jquery-ui' {
-            defaultBundle 'single-bundle'
+            defaultBundle 'third-party-bundle'
 
-            resource id:'js', bundle : 'single-bundle'
+            resource id:'js', bundle : 'third-party-bundle'
         }
 
         blueprint {
-            defaultBundle 'single-bundle'
+            defaultBundle 'third-party-bundle'
 
-            resource id:'main', bundle : 'single-bundle'
-            resource id:'ie', bundle : 'single-bundle'
+            resource id:'main', bundle : 'third-party-bundle'
+            resource id:'ie', bundle : 'third-party-bundle'
         }
     }
 }

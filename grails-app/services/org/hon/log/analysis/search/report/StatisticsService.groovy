@@ -175,5 +175,26 @@ class StatisticsService {
 		
 		return [totalCount:totalCount, refererCounts:sortedRefererCount]
 	}
-
+	
+	Map countBySession(){
+		
+		def query = """
+			SELECT numQueries as sessionSize, count(*) as counts from 
+				(
+				SELECT count(*) as numQueries
+				FROM hon_log.search_log_line 
+				group by session_id 
+				) as Summary
+			group by numQueries
+			"""
+		def numSessions = 0
+	
+		def db = new Sql(dataSource)
+		Map sessionsCounts = [:]
+		db.eachRow(query) { row ->
+			sessionsCounts[row[0]] = row[1]
+			numSessions += row[1]
+		}
+		return [totalCount:numSessions, sessionCounts:sessionsCounts]
+	}
 }

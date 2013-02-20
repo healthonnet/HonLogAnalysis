@@ -70,5 +70,13 @@ class StatisticsController extends LogAnalysisControllerAbst {
 					nbTotal:Term.count()
 				]
 	}
+	
+	def countBySession = {
+		Map result = statisticsService.countBySession()
+		[
+			nbTotal:result.totalCount,
+			countBy:googleVisualizationDataFromCount(result.sessionCounts, [category:'session']),
+		]
+	}
 
 }

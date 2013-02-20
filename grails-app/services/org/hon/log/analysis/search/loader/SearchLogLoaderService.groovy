@@ -59,6 +59,7 @@ class SearchLogLoaderService implements InitializingBean{
 	 * @return the number of actually saved {@link SearchLogLine}
 	 */
 	public int load(String source, File file , options=[:]){
+		
 		// since we're batch inserting, we'll tell hibernate when to flush
 		sessionFactory.currentSession.setFlushMode(FlushMode.MANUAL);
 		

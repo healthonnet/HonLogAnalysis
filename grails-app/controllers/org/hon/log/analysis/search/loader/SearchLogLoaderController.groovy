@@ -40,7 +40,6 @@ class SearchLogLoaderController {
 			
 			int lineCount = 0;
 			int fileCount = 0;
-			Map<String,Object> displayResults = new TreeMap<String, Object>();
 			long startTime = System.currentTimeMillis();
 
             def files = directory.listFiles();

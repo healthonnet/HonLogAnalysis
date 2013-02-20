@@ -35,6 +35,7 @@ grails.project.dependency.resolution = {
 
         compile ':cache:1.0.0'
         compile ":cache-headers:1.1.5"
+        compile ":quartz:1.0-RC5"
 
         build   ":tomcat:$grailsVersion"
 		

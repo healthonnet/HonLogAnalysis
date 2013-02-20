@@ -32,8 +32,10 @@ grails.project.dependency.resolution = {
     }
     
     plugins {
-        
-        
+
+        compile ':cache:1.0.0'
+        compile ":cache-headers:1.1.5"
+
         build   ":tomcat:$grailsVersion"
 		
         runtime   ":hibernate:$grailsVersion"

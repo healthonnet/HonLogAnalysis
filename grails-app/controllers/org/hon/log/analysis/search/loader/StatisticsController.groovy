@@ -20,23 +20,22 @@ class StatisticsController extends LogAnalysisControllerAbst {
 	
 	def countByLanguage = {
 		[
-					nbTotal:SearchLogLine.count(),
-					countBy:googleVisualizationDataFromCount(statisticsService.countByLanguage(), [category:'language'])
-				]
+			nbTotal:SearchLogLine.count(),
+			countBy:googleVisualizationDataFromCount(statisticsService.countByLanguage(), [category:'language'])
+		]
 	}
 	def countByQueryLength = {
 		[
-					nbTotal:SearchLogLine.count(),
-					countBy:googleVisualizationDataFromCount(statisticsService.countByQueryLength(), [category:'query length'])
-				]
+			nbTotal:SearchLogLine.count(),
+			countBy:googleVisualizationDataFromCount(statisticsService.countByQueryLength(), [category:'query length'])
+		]
 	}
 	def countByCountry = {
-		Map result = statisticsService.countByCountry()
-		
+		Map result = statisticsService.countByCountry()	
 		[
-					nbTotal:result.totalCount,
-					countBy:googleVisualizationDataFromCount(result.countryCodeCounts, [category:'country', label:'country name'])
-				]
+			nbTotal:result.totalCount,
+			countBy:googleVisualizationDataFromCount(result.countryCodeCounts, [category:'country', label:'country name'])
+		]
 	}
 
 	def countByReferer = {
@@ -44,7 +43,7 @@ class StatisticsController extends LogAnalysisControllerAbst {
 		[
 			nbTotal:result.totalCount,
 			countBy:googleVisualizationDataFromCount(result.refererCounts, [category:'referer'])
-			]	 	
+		]
 	}
 
 	def mostUsedTerms = {
@@ -55,7 +54,6 @@ class StatisticsController extends LogAnalysisControllerAbst {
 	}
 	
 	def countriesByTerm = {
-
 		[
 			terms:statisticsService.mostUsedTerms().collect {it.key},
 			countBy:googleVisualizationDataFromCount(statisticsService.countriesByTerm(params.term), [category:'terms',label:'country name']),
@@ -66,9 +64,9 @@ class StatisticsController extends LogAnalysisControllerAbst {
 
 	def mostFrequentTermCoOccurence = {
 		[
-					countBy:googleVisualizationDataFromCount(statisticsService.mostFrequentTermCoOccurence(), [category:'terms co-occurence']),
-					nbTotal:Term.count()
-				]
+			countBy:googleVisualizationDataFromCount(statisticsService.mostFrequentTermCoOccurence(), [category:'terms co-occurence']),
+			nbTotal:Term.count()
+		]
 	}
 	
 	def countBySession = {
@@ -78,5 +76,12 @@ class StatisticsController extends LogAnalysisControllerAbst {
 			countBy:googleVisualizationDataFromCount(result.sessionCounts, [category:'session']),
 		]
 	}
-
+	
+	def mostUsedQueries = {
+		Map result = statisticsService.countByQueries()
+		[
+			countBy:googleVisualizationDataFromCount(result.queryCounts, [category:'queries']),
+			nbTotal:result.totalCount
+		]
+	}
 }

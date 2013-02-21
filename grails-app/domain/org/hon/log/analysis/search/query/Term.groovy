@@ -23,7 +23,7 @@ class Term {
 			
     }
 		
-		String toString() {
+	String toString() {
 			value
 	}
 }

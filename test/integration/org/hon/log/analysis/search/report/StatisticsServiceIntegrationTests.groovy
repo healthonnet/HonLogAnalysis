@@ -68,4 +68,13 @@ class StatisticsServiceIntegrationTests extends GroovyTestCase {
             PT:[1, 'Portugal'], PE:[3, 'Peru'], TN:[8, 'Tunisia'], EC:[2, 'Ecuador'], VE:[1, 'Venezuela'], PH:[1, 'Philippines'], 
             MQ:[3, 'Martinique'], MX:[3, 'Mexico'], UA:[2, 'Ukraine'], RU:[1, 'Russian Federation']]
 	}
+	
+	void testMostUsedQueries() {
+		searchLogLoaderService.load('hon', new ClassPathResource('resources/hon-session.txt').file)
+		Map m = statisticsService.countByQueries(limit:2)
+		assert m.size() == 2
+		assert m.totalCount == 3 
+		assert m.queryCounts == ['purple eyes':3, 'red eyes':2]
+		
+	}
 }

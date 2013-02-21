@@ -163,11 +163,11 @@ class StatisticsService {
 			totalCount += row[1]
 		}
 		
-		//Sort the map by value to drop the not used entries
-		Map sortedRefererCount = refererCounts.sort {it.value}
-		int mapSize = sortedRefererCount.size()
-		if (mapSize > limit) {
-			sortedRefererCount = sortedRefererCount.drop(mapSize - limit)	
+		Map sortedRefererCount = refererCounts
+		if (sortedRefererCount.size() > limit) {
+			//Sort the map by value to drop the not used entries
+			sortedRefererCount = refererCounts.sort {it.value}
+			sortedRefererCount = sortedRefererCount.drop(refererCounts.size() - limit)	
 		}
 		
 		//Sort the map by value again, but this time in reverse order
@@ -182,7 +182,7 @@ class StatisticsService {
 			SELECT numQueries as sessionSize, count(*) as counts from 
 				(
 				SELECT count(*) as numQueries
-				FROM hon_log.search_log_line 
+				FROM search_log_line 
 				group by session_id 
 				) as Summary
 			group by numQueries
@@ -196,5 +196,34 @@ class StatisticsService {
 			numSessions += row[1]
 		}
 		return [totalCount:numSessions, sessionCounts:sessionsCounts]
+	}
+	
+	Map countByQueries(options=[:]){
+		int limit = options?.limit?:50
+		def query = """
+			SELECT orig_query as query, count(orig_query)
+			FROM search_log_line
+			GROUP BY orig_query
+			"""
+		
+		def db = new Sql(dataSource)
+		Map queryCounts = [:]
+		db.eachRow(query) { row ->
+			queryCounts[row[0].toString()] = row[1]
+		}
+		
+		def numUniqueQueries = queryCounts.size()
+		
+		Map sortedQueryCount = queryCounts
+		if (queryCounts.size() > limit){
+			sortedQueryCount = queryCounts.sort {it.value}
+			sortedQueryCount = sortedQueryCount.drop(queryCounts.size() - limit)
+		}
+		
+		//Sort the map by value again, but this time in reverse order
+		sortedQueryCount = sortedQueryCount.sort {a, b -> b.value <=> a.value}
+		
+		return [totalCount:numUniqueQueries, queryCounts:sortedQueryCount]
+		
 	}
 }

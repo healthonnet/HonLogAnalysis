@@ -26,7 +26,7 @@
            </column>
        </createTable>
 
-       <sql>ALTER TABLE `referer` ADD UNIQUE INDEX `idx_referer_url` USING BTREE(`url`(255))</sql>
+       <sql>ALTER TABLE `referer` ADD INDEX `idx_referer_url` USING BTREE(`url`(255))</sql>
 
        <createIndex indexName="idx_domain_value" tableName="domain"
                     unique="true">

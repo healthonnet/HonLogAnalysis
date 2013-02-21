@@ -18,9 +18,9 @@ class SearchLogLine {
 	String engine
 	LoadedFile loadedFile
 	IpAddress ipAddress
-	String referer
+	Referer referer
 	
-	static belongsTo = [loadedFile: LoadedFile,ipAddress: IpAddress]	
+	static belongsTo = [loadedFile: LoadedFile,ipAddress: IpAddress,referer:Referer]
 	static hasMany = [terms:Term]
 	static StopWordRemover stopWordsRemover=[:]
 	

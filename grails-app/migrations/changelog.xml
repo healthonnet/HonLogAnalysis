@@ -8,4 +8,5 @@
     <include file="005-add-referer-column.xml"/>
     <include file="006-add-index-to-referer-column.xml"/>
     <include file="007-increase-referer-value-size.xml"/>
+    <include file="008-add-referer-domain.xml"/>
 </databaseChangeLog>

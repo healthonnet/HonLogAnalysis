@@ -24,10 +24,11 @@ environments {
 	test {
 		dataSource {
 			dbCreate = "create-drop"
-			driverClassName = "org.hsqldb.jdbcDriver"
-			username = "sa"
-			password = ""
-			url = "jdbc:hsqldb:mem:testDb"
+            driverClassName = "org.h2.Driver"
+            username = "sa"
+            password = ""
+            url = "jdbc:h2:mem:testDb;MVCC=TRUE"
+            dialect = 'org.hibernate.dialect.H2Dialect'
 		}
 	}
 	production {

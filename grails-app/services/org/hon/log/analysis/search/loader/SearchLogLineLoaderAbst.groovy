@@ -4,8 +4,13 @@ import org.grails.geoip.service.GeoIpService;
 import org.hon.log.analysis.search.Country;
 import org.hon.log.analysis.search.IpAddress
 import org.hon.log.analysis.search.SearchLogLine;
+import org.hon.log.analysis.search.Referer;
+import org.hon.log.analysis.search.Domain;
+
+import com.google.common.base.Strings;
 
 import com.maxmind.geoip.Location
+import org.hon.log.analysis.search.util.URLUtil
 
 abstract class SearchLogLineLoaderAbst {
 	GeoIpService geoIpService
@@ -70,5 +75,42 @@ abstract class SearchLogLineLoaderAbst {
 		searchLogLine.ipAddress = ipAddress;
 		
 	}
+
+    /**
+     * Create a new Domain if necessary and associate it with the given searchLogLine.referer
+     * @param searchLogLine
+     * @param remoteIp
+     */
+    void associateSearchLogLineWithRefererDomain(SearchLogLine searchLogLine, String refererUrl) {
+
+        if (!refererUrl) {
+            return
+        }
+
+
+        def referer = Referer.findByUrl(refererUrl)
+
+        if (!referer) {  // create new
+            referer = new Referer(url:refererUrl)
+
+            // domain extraction
+            String refererDomain = URLUtil.getDomainFromUrl(refererUrl);
+
+            if (refererDomain != null) { // not an invalid domain
+
+                // create a new domain object or update an existing one
+                Domain domain = Domain.findByValue(refererDomain);
+                if (!domain) { // create new
+                    domain = new Domain(
+                            value : refererDomain
+                    ).save(failOnError: true, validate: false);
+                }
+                referer.domain = domain;
+            }
+            referer.save(failOnError: true);
+        }
+        searchLogLine.referer = referer;
+
+    }
 
 }

@@ -67,6 +67,7 @@ class SearchLogLoaderServiceIntegrationTests extends GroovyTestCase {
 		int n = searchLogLoaderService.load('hon', testFile('hon-1.txt'))
 		assert n == 96
 		assert SearchLogLine.count() == 96
+
 	}
 	
 	void testNoDuplicateTerms() {

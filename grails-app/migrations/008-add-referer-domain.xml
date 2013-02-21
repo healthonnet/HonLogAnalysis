@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+   <changeSet author="nolan" id="add-referer-domain">
+       <comment>Add a new table for the referer's domain</comment>
+
+       <createTable tableName="referer">
+           <column autoIncrement="true" name="id" type="BIGINT">
+               <constraints nullable="false" primaryKey="true" />
+           </column>
+           <column name="url" type="CLOB">
+               <constraints nullable="false" />
+           </column>
+           <column name="domain_id" type="BIGINT">
+                <constraints nullable="true" />
+           </column>
+       </createTable>
+
+       <createTable tableName="domain">
+           <column autoIncrement="true" name="id" type="BIGINT">
+               <constraints nullable="false" primaryKey="true" />
+           </column>
+           <column name="value" type="VARCHAR(255)">
+               <constraints nullable="false" />
+           </column>
+       </createTable>
+
+       <sql>ALTER TABLE `referer` ADD UNIQUE INDEX `idx_referer_url` USING BTREE(`url`(255))</sql>
+
+       <createIndex indexName="idx_domain_value" tableName="domain"
+                    unique="true">
+           <column name="value" />
+       </createIndex>
+
+       <addColumn tableName="search_log_line">
+           <column name="referer_id" type="BIGINT">
+               <constraints nullable="true" />
+           </column>
+       </addColumn>
+
+       <sql>insert into referer (url) select distinct sll.referer from
+           search_log_line sll where sll.referer is not null and sll.referer != '-'
+       </sql>
+
+       <sql>update search_log_line sll, referer r set sll.referer_id =
+           r.id where sll.referer = r.url
+       </sql>
+
+       <dropColumn tableName="search_log_line" columnName="referer" />
+   </changeSet>
+    <changeSet author="nolan" id="add-domains-to-referer">
+        <customChange
+                class="org.hon.log.analysis.search.migration.RefererToDomainCustomSqlChange" />
+    </changeSet>
+
+</databaseChangeLog>

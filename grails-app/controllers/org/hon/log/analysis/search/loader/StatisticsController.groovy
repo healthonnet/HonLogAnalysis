@@ -1,7 +1,5 @@
 package org.hon.log.analysis.search.loader
 
-import java.util.Map;
-
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.query.Term
 import org.hon.log.analysis.search.report.StatisticsService
@@ -39,7 +37,7 @@ class StatisticsController extends LogAnalysisControllerAbst {
 	}
 
 	def countByReferer = {
-		Map result = statisticsService.countByReferer()
+		Map result = statisticsService.countByRefererDomain()
 		[
 			nbTotal:result.totalCount,
 			countBy:googleVisualizationDataFromCount(result.refererCounts, [category:'referer'])

@@ -141,39 +141,36 @@ class StatisticsService {
 			countryCodeCounts : countryCodeCounts]
 	}
 	
-	Map countByReferer(options=[:]){
+	Map countByRefererDomain(options=[:]){
 		int limit = options?.limit?:10
-		
-		//if count(*) is used, it is also shown the number of queries with referer = NULL
-		//TODO: Determine weather it is better to use count(referer) or not.
+
 		def query = """
-			select referer, count(referer) as counter
-			from search_log_line
-			where referer is not null
-			group by referer
-			order by counter desc
-			"""
-		def totalCount = 0
+            select value, sum_domain_counts
+            from (
+                select domain_id, sum(referer_count) as sum_domain_counts
+                from (
+                    select referer_id, count(referer_id) as referer_count
+                    from search_log_line
+                    group by referer_id
+                ) grouped
+                join referer r on grouped.referer_id = r.id
+                group by r.domain_id
+            ) grouped2
+            join domain d on grouped2.domain_id = d.id
+            order by sum_domain_counts desc
+            limit $limit
+            """
+
+
 		
 		def db = new Sql(dataSource)
-		Map refererCounts = [:]
-		db.eachRow(query) { row ->
-			def refererName = row[0]
-			refererCounts[refererName] = row[1]
-			totalCount += row[1]
-		}
-		
-		Map sortedRefererCount = refererCounts
-		if (sortedRefererCount.size() > limit) {
-			//Sort the map by value to drop the not used entries
-			sortedRefererCount = refererCounts.sort {it.value}
-			sortedRefererCount = sortedRefererCount.drop(refererCounts.size() - limit)	
-		}
-		
-		//Sort the map by value again, but this time in reverse order
-		sortedRefererCount = sortedRefererCount.sort {a, b -> b.value <=> a.value}
-		
-		return [totalCount:totalCount, refererCounts:sortedRefererCount]
+
+        //Sort the map by value in reverse order
+		Map refererCounts = db.rows(query).collectEntries{row -> [row[0],row[1] as Number]}.sort {a, b -> b.value <=> a.value}
+
+        def totalCount = refererCounts.values().sum();
+
+		return [totalCount:totalCount, refererCounts:refererCounts]
 	}
 	
 	Map countBySession(){

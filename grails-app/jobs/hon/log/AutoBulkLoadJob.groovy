@@ -43,7 +43,7 @@ class AutoBulkLoadJob {
 			// hard code 'hon' style logs for now
 			def options = [origFile : file.getName(), filter : filter ];
 			int currentLineCount = searchLogLoaderService.load('hon', file, options);
-			log.info("Loading " + file.getName())
+                        log.info("Loaded $currentLineCount lines in ${file.getName()}")
 		}
 		log.info("Cron process finished.")
     }

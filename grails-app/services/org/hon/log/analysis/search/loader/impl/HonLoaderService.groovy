@@ -1,12 +1,11 @@
 package org.hon.log.analysis.search.loader.impl
 
+import org.hon.log.analysis.search.util.StringUtil
+
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Map
 import java.util.regex.Pattern
-import java.util.Date;
 
-import org.grails.geoip.service.GeoIpService;
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.loader.SearchLogLineLoaderAbst
 import org.hon.log.analysis.search.util.URLUtil;
@@ -157,7 +156,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	Map line2Map(String line){
 		Map ret = [:]
 		line.eachMatch(patternBlock){m->
-			ret[m[1]]=m[2]
+			ret[m[1]] = StringUtil.replaceFourByteUtf8(m[2]);
 		}
 		ret
 	}

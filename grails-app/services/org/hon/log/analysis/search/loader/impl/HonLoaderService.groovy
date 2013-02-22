@@ -8,6 +8,7 @@ import java.util.regex.Pattern
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.loader.SearchLogLineLoaderAbst
 import org.hon.log.analysis.search.util.URLUtil;
+import org.hon.log.analysis.search.util.StringUtil
 
 /**
  * Analyzer for HON-style log lines.  Accepts logs in a format given by files such as znverdi.honsearch_log.20120325.

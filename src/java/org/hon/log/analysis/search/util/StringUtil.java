@@ -1,26 +1,36 @@
-package org.hon.log.analysis.search.util
+package org.hon.log.analysis.search.util;
 
-import com.google.common.base.Charsets
-import com.google.common.primitives.Bytes
-import com.google.common.primitives.UnsignedBytes
-import org.codehaus.groovy.runtime.ArrayUtil
+import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
+import com.google.common.primitives.Bytes;
 
-class StringUtil {
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: nolan
+ * Date: 2/22/13
+ * Time: 6:02 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class StringUtil {
 
     /**
      * Split a string without the bullshit that Java does, where if the delimiter falls at the end, you get nothing
-     * instead of the empty string.  
-     * 
-     * I probably should use Google Guava's Splitter() like a sane person, but I don't feel like including 
+     * instead of the empty string.
+     *
+     * I probably should use Google Guava's Splitter() like a sane person, but I don't feel like including
      * a 1MB extra jar file in the code right now.
-     * 
-     * 
+     *
+     *
      * @param str
      * @param delimiter
      * @return
      */
     public static List<String> nonStupidSplit(String str, String delimiter) {
-        
+
         List<String> result = new ArrayList<String>();
         int lastIndex = 0;
         int index = str.indexOf(delimiter);
@@ -31,7 +41,7 @@ class StringUtil {
         }
         result.add(str.substring(lastIndex, str.length()));
 
-        return result
+        return result;
     }
 
     /**
@@ -47,19 +57,23 @@ class StringUtil {
      */
     public static String replaceFourByteUtf8(String input) {
 
-        byte[] bytes = input.getBytes(Charsets.UTF_8.name())
+        try {
+            byte[] bytes = input.getBytes(Charsets.UTF_8.name());
 
-        // most of the time, replacement will not be necessary, so check first
-        for (int i = 0; i < bytes.length; i++) {
-           byte b = bytes[i];
-           if (isFourByteBeginMarker(b)) { // four-byte begin marker
-               return replaceFourByteUtf8Internal(bytes);
-           }
+            // most of the time, replacement will not be necessary, so check first
+            for (int i = 0; i < bytes.length; i++) {
+                byte b = bytes[i];
+                if (isFourByteBeginMarker(b)) { // four-byte begin marker
+                    return replaceFourByteUtf8Internal(bytes);
+                }
+            }
+            return input;
+        } catch (UnsupportedEncodingException e) { // should never occur
+            throw Throwables.propagate(e);
         }
-        return input;
     }
 
-    private static String replaceFourByteUtf8Internal(byte[] bytes) {
+    private static String replaceFourByteUtf8Internal(byte[] bytes) throws UnsupportedEncodingException {
         List<Byte> byteList = new ArrayList<Byte>(Bytes.asList(bytes));
 
         for (int i = 0 ; i < byteList.size(); i++) {
@@ -78,7 +92,7 @@ class StringUtil {
 
     private static boolean isFourByteBeginMarker(byte b) {
         // true if it matches 11110xxx
-        return (byte)((b >> 3) & 0x1F) == (byte)0x1E;
+        return ((b >> 3) & 0x1F) == 0x1E;
     }
-    
+
 }

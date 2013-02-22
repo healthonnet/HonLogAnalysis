@@ -1,6 +1,5 @@
 package org.hon.log.analysis.search.loader.impl
 
-import org.hon.log.analysis.search.util.StringUtil
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat

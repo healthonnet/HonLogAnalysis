@@ -1,5 +1,6 @@
 package org.hon.log.analysis.search
 
+import org.hon.log.analysis.search.util.StringUtil
 import org.junit.*
 
 /**

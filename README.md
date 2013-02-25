@@ -51,7 +51,7 @@ Persistence
 HON Log Analysis uses a MySQL database to store loaded files, log lines, and query terms. It is assumed that the database is in UTF-8 format, so since MySQL defaults to Latin-1, be sure to create the database using:
 
 ```sql
-create database hon_log character set utf8mb4 collate utf8mb4_bin;
+create database hon_log character set utf8 collate utf8_general_ci;
 create user 'hon_log'@'localhost' identified by 'hon_log';
 grant all on hon_log.* to 'hon_log'@'localhost' identified by 'hon_log';
 ```

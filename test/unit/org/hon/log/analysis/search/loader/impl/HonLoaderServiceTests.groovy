@@ -1,5 +1,7 @@
 package org.hon.log.analysis.search.loader.impl
 
+import org.hon.log.analysis.search.Domain
+import org.hon.log.analysis.search.Referer
 import org.junit.Ignore
 
 import java.text.SimpleDateFormat
@@ -20,6 +22,8 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		mockDomain(SearchLogLine)
 		mockDomain(IpAddress)
 		mockDomain(Country)
+        mockDomain(Referer)
+        mockDomain(Domain)
 	}
 
 	protected void tearDown() {
@@ -56,8 +60,6 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		assert q.terms==['Arthrogrypose']
 	}
 
-    @Ignore
-    // ignore until we figure out why Referer.findByUrl(...) gives us groovy.lang.MissingMethodException
 	void test_parse_line_basic(){
 		SearchLogLine sll = service.parseLine('<<remoteIp=187.18.200.5>><<usertrack=187.18.200.5.1322553057659472>><<time=[29/Nov/2011:08:51:41 +0100]>><<query=?engine=honSelect&search=Nefrocalcinose&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/HONselect_pt?browse+C12.777.419.590>>')
 		assert sll
@@ -70,8 +72,6 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		
 	}
 
-    @Ignore
-    // ignore until we figure out why Referer.findByUrl(...) gives us groovy.lang.MissingMethodException
 	void test_parse_line_basic_2(){
 		SearchLogLine sll = service.parseLine('<<remoteIp=129.143.71.36>><<usertrack=->><<time=[29/Nov/2011:08:50:45 +0100]>><<query=?engine=honSelect&search=Krankheitszeichen+und+Symptome&EXACT=0&TYPE=1&action=search>><<referer=http://www.hon.ch/HONselect/Selection_de/C23.888.html>>')
 		assert sll
@@ -84,8 +84,6 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		
 	}
 
-    @Ignore
-    // ignore until we figure out why Referer.findByUrl(...) gives us groovy.lang.MissingMethodException
 	void test_multi_terms(){
 		String str = '<<remoteIp=108.195.226.117>><<usertrack=->><<time=[11/Dec/2011:23:09:58 +0100]>><<query=?engine=honSelect&search=Cushing+Syndrome&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/HONselect_f?search>>>>'
 		assert service.acceptLine(str)
@@ -95,8 +93,6 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 		assert sll.ipAddress.value == '108.195.226.117'
 	}
 
-    @Ignore
-    // ignore until we figure out why Referer.findByUrl(...) gives us groovy.lang.MissingMethodException
 	void test_multi_terms_encoded(){
 		
 		String str = '<<remoteIp=88.74.122.100>><<usertrack=88.74.122.100.1323558003433727>><<time=[11/Dec/2011:00:00:04 +0100]>><<query=?engine=honSelect&search=Genitalkrankheiten%2C+m%C3%A4nnliche&EXACT=0&TYPE=1&action=search>><<referer=http://debussy.hon.ch/cgi-bin/HONselect_f?search>>>>'
@@ -110,16 +106,12 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 	}
 
 
-    @Ignore
-    // ignore until we figure out why Referer.findByUrl(...) gives us groovy.lang.MissingMethodException
 	void test_problem_line2() {
 		def line = '<<remoteIp=189.127.148.93>><<usertrack=189.127.148.93.1322251209304264>><<time=[25/Nov/2011:21:00:14 +0100]>><<query=?search=Doen%C3%A7as+do+Sistema+End%C3%B3crino&EXACT=0&TYPE=1&action=search>><<referer=http://www.hon.ch/HONselect/Selection_pt/C19.html>>';
 		
 		service.parseLine(line)
 	}
 
-    @Ignore
-    // ignore until we figure out why Referer.findByUrl(...) gives us groovy.lang.MissingMethodException
     void testIssue1() {
         
         // Fixes for GitHub issue 1: https://github.com/healthonnet/HonLogAnalysis/issues/1
@@ -153,8 +145,6 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
             )
     }
 
-    @Ignore
-    // ignore until we figure out why Referer.findByUrl(...) gives us groovy.lang.MissingMethodException
     void testProperEscaping() {
         // some lines are still not properly escaped
         def line = "<<remoteIp=192.35.79.70>><<usertrack=192.35.79.70.1324061914127740>><<time=[16/Dec/2011:22:26:44 +0100]>><<query=?engine=honCodeSearch&q=enuresis%2Bin%2Badults%2B%2528and%2Bchildren%2529%253A%2Breviewed%2B&language=en&action=search>><<referer=http://www.hon.ch/HONcode/Search/search.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&q=enuresis+in+adults+%28and+children%29%3A+reviewed+&sa=Search&lr=lang_en&hl=en&cof=FORID%3A11>>"
@@ -163,13 +153,13 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
             )
     }
 
-	private void checkLine(String line, String expectedEngine, String expectedOrigQuery, String expectedSource){
+	private void checkLine(String line, String expectedEngine, String expectedOrigQuery, String expectedReferer){
         
 		SearchLogLine parsedLine = service.parseLine(line)
         
         assert parsedLine.engine == expectedEngine
         assert parsedLine.origQuery == expectedOrigQuery
-        assert parsedLine.referer == expectedSource        
+        assert parsedLine.referer.url == expectedReferer
 	}	
 	
 	void testIsTheSameSession(){

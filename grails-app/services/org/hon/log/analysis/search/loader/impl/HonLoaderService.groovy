@@ -156,7 +156,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	Map line2Map(String line){
 		Map ret = [:]
 		line.eachMatch(patternBlock){m->
-			ret[m[1]] = StringUtil.replaceFourByteUtf8(m[2]);
+			ret[m[1]] = m[2];
 		}
 		ret
 	}

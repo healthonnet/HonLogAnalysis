@@ -47,7 +47,7 @@ grails.project.dependency.resolution = {
         runtime ':geoip:0.2'
         runtime ':google-visualization:0.6.1'
         
-        runtime ':jasper:1.2.2'
+        runtime ':jasper:1.6.1'
         runtime ':jquery:1.6.1.1'
         runtime ':jquery-file-upload:0.2'
         runtime ':jquery-json:2.2.2'

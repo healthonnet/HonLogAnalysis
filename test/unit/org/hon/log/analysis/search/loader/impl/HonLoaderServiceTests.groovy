@@ -164,12 +164,12 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 	
 	void testIsTheSameSession(){
 		
-		String dateA1Str = '14/Jan/1987:00:10:00' // First query in the session
-		String dateA2Str = '14/Jan/1987:00:30:00' // 20 minutes later
-		String dateA3Str = '14/Jan/1987:01:00:00' // 30 minutes later
-		String dateA4Str = '14/Jan/1987:01:30:01' // 30 minutes and 1 second later
+		String dateA1Str = '14/01/1987:00:10:00' // First query in the session
+		String dateA2Str = '14/01/1987:00:30:00' // 20 minutes later
+		String dateA3Str = '14/01/1987:01:00:00' // 30 minutes later
+		String dateA4Str = '14/01/1987:01:30:01' // 30 minutes and 1 second later
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy:HH:mm:ss");
 		
 		Date A1 = (Date) formatter.parse(dateA1Str)
 		Date A2 = (Date) formatter.parse(dateA2Str)

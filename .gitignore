@@ -5,3 +5,4 @@ stacktrace.log
 .idea
 *.iml
 .DS_Store
+.link_to_grails_plugins

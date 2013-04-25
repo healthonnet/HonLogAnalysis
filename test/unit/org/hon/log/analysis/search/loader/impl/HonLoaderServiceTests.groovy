@@ -1,16 +1,14 @@
 package org.hon.log.analysis.search.loader.impl
 
-import org.hon.log.analysis.search.Domain
-import org.hon.log.analysis.search.Referer
-import org.junit.Ignore
+import grails.test.*
+import grails.test.mixin.*
 
 import java.text.SimpleDateFormat
-import java.util.Date;
-
-import grails.test.*
 
 import org.hon.log.analysis.search.Country
+import org.hon.log.analysis.search.Domain
 import org.hon.log.analysis.search.IpAddress
+import org.hon.log.analysis.search.Referer
 import org.hon.log.analysis.search.SearchLogLine
 import org.hon.log.analysis.search.query.Term
 
@@ -119,7 +117,6 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
     }
 
     void testIssue1() {
-
         // Fixes for GitHub issue 1: https://github.com/healthonnet/HonLogAnalysis/issues/1
 
         // honCodeSearch line that causes the error
@@ -193,10 +190,11 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
 
     //    Etapes 1 et 2 du TDD: 1.Ecrire un premier test/ 2.Vérifier qu'il échoue (car le code qu'il teste n'existe pas), afin de vérifier que le test est valide
     //    Fonction permettant de vérifier les données y compris le language
-    private void testLineWithLanguage(String line, String expectedEngine, String expectedOrigQuery, 
+    private void testLineWithLanguage(String line, String expectedEngine, String expectedOrigQuery,
             String expectedReferer, String expectedLanguage){
-        
+
         SearchLogLine parsedLine = service.parseLine(line)
+
         assert parsedLine.engine == expectedEngine
         assert parsedLine.origQuery == expectedOrigQuery
         assert parsedLine.referer.url == expectedReferer
@@ -206,22 +204,29 @@ class HonLoaderServiceTests extends GrailsUnitTestCase {
     void testKaaheLogLine1(){
         testLineWithLanguage("<<remoteIp=129.195.199.188>><<usertrack=129.195.199.188.1354004673436697>><<time=[17/Apr/2013:12:01:22 +0200]>><<query=?engine=KaaheSearch&q=hepatitis&language=ar&facet=tutorial&spechosen=&start=0&action=search>><<referer=http://www.kaahe.org/cgi/dev/search.pl?l=ar&searchword=hepatitis&facet=tutorial>>",
                 "KaaheSearch",
-                "hepatitis", 
+                "hepatitis",
                 "http://www.kaahe.org/cgi/dev/search.pl?l=ar&searchword=hepatitis&facet=tutorial",
                 "ar")
-
     }
 
     void testKaaheLogLine2(){
         testLineWithLanguage("<<remoteIp=129.195.199.188>><<usertrack=129.195.199.188.1354004673436697>><<time=[17/Apr/2013:12:01:31 +0200]>><<query=?engine=KaaheSearch&q=%D8%A7%D9%84%D9%85%D9%88%D8%B3%D9%88%D8%B9%D8%A9&language=ar&facet=tutorial&spechosen=&start=0&action=search>><<referer=http://www.kaahe.org/cgi/dev/search.pl>>",
                 "KaaheSearch",
-                "\u0627\u0644\u0645\u0648\u0633\u0648\u0639\u0629", 
+                "\u0627\u0644\u0645\u0648\u0633\u0648\u0639\u0629",
                 "http://www.kaahe.org/cgi/dev/search.pl",
                 "ar")
+    }
 
+    void testEspagnol(){
+        testLineWithLanguage("<<remoteIp=190.190.32.206>><<usertrack=190.190.32.206.1366065058899858>><<time=[17/Apr/2013:00:04:30 +0200]>><<query=?engine=honCodeSearch&q=adolescencia&language=sp&action=search>><<referer=http://www.hon.ch/HONcode/Search/search_sp.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&q=adolescencia&sa=Buscar&lr=lang_sp&hl=sp&cof=FORID%3A11>>",
+                "honCodeSearch",
+                "adolescencia",
+                "http://www.hon.ch/HONcode/Search/search_sp.html?cref=http%3A%2F%2Fwww.hon.ch%2FCSE%2FHONCODE%2Fcontextlink.xml&q=adolescencia&sa=Buscar&lr=lang_sp&hl=sp&cof=FORID%3A11",
+                "sp")
     }
     
-    
+  
+ 
 }
 
 

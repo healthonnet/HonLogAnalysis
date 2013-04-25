@@ -34,7 +34,6 @@ class SearchLogLine {
 		autoTexts: [new AutoText(AutoText.AUTOTEXT_PAGE_X_OF_Y, AutoText.POSITION_FOOTER, HorizontalBandAlignment.buildAligment(AutoText.ALIGMENT_CENTER), (byte)0, 200, 200)]
 ]
 	
-	
 	void setTermList(List<String> ts){
 		stopWordsRemover.cleanTerms(ts).unique().each{ 
 			Term t = Term.findByValue(it)?:new Term(value:it).save() // save now to avoid duplicate terms
@@ -65,7 +64,6 @@ class SearchLogLine {
 	static mapping = {
 		version false
 	}
-	
 	
 	String toString(){
 		"$id\t$userId\t$terms\t$topics\t$origQuery\t$sessionId"

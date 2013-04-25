@@ -38,7 +38,10 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	final Pattern patternEngine = ~/\bengine=([^&]+?)&/
 	final Pattern patternBlock = ~/<<(\w+)=(.*?)>>/
 	final Pattern patternDateCleanup = ~/\s+[\+\-]\d+/
+    final Pattern patternLanguage= ~/\blanguage=([^&]{2})&/
 	def sessionsMap = [:]
+    
+    
 	
 	// DateFormat is not threadsafe
 	final ThreadLocal<DateFormat> localDateFormat = new ThreadLocal<DateFormat>(){
@@ -92,6 +95,10 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		return decoded;
 	}
 	
+    
+    
+    
+    
 	@Override
 	public SearchLogLine parseLine(String line) {
 		Map myLine2Map = line2Map(line)
@@ -102,8 +109,9 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 		String rawQuery = myLine2Map.query;
 		String engine = findUrlDecodedIfRegexMatches(patternEngine, rawQuery);
 		String query = findUrlDecodedIfRegexMatches(patternQuery, rawQuery, engine);
+        String language=findUrlDecodedIfRegexMatches(patternLanguage, rawQuery, engine);
 		Map parsedQuery = parseQuery(myLine2Map.query, engine)
-
+        
 		def searchLogLine = new SearchLogLine(
 				source:source,
 				userId:myLine2Map.usertrack,
@@ -111,14 +119,17 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 				termList:parsedQuery.terms,
 				origQuery:query,
 				engine: engine,
+                language:language,
 				)
 		associateSearchLogLineWithRemoteIp(searchLogLine, myLine2Map.remoteIp);
         associateSearchLogLineWithRefererDomain(searchLogLine, myLine2Map.referer);
 		associateSearchLogLineWithSessionId(searchLogLine)
-		
 		return searchLogLine
 	}
 	
+    
+    
+    
 	// SessionLength is usually 30 minutes (1800000 ms)
 	private boolean isTheSameSession(Date a, Date b, long sessionLength = 1800000){
 		return  (Math.max(a.getTime(), b.getTime()) - Math.min(a.getTime(), b.getTime()) <= sessionLength)

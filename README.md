@@ -9,7 +9,7 @@ Developers
 - Alexandre Masselot
 - João Palotti
 - Daniela Sinjari
-- Samia chahlal
+- Samia Chahlal
 
 [Health On the Net Foundation][6]
 

@@ -66,7 +66,6 @@ class StatisticsService {
                 """
 
 		def db = new Sql(dataSource)
-		
 		return db.rows(query, [limit]).collectEntries { row -> [row[0],row[1]]}
 	}
 

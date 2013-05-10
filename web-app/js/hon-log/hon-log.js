@@ -48,7 +48,8 @@ var HonLog;
                 icons     : [
                     {find : '.pastel-24.pastel-24-page'},
                     {find : '.pastel-24.pastel-24-calculator'},
-                    {find : '.pastel-24.pastel-24-page-information'}
+                    {find : '.pastel-24.pastel-24-page-information'},
+                    {find : '.pastel-24.pastel-24-page-suggestions'}
                 ]
             });
             $('select.menu').change(function(){
@@ -59,7 +60,8 @@ var HonLog;
             var icons = [
                 "pastel-24 pastel-24-page",
                 "pastel-24 pastel-24-calculator",
-                "pastel-24 pastel-24-page-information"
+                "pastel-24 pastel-24-page-information",
+                "pastel-24 pastel-24-page-suggestions"
             ];
 
             var selectMenus = $('a.ui-selectmenu');

@@ -21,6 +21,7 @@ class DetailsService {
 	
 	Map listByUser(options = [:]) {
 		
+        //Nombre max d'analyse de User
 		int limit = options?.limit?:50
 		
 		String query = """select sll.user_id, count(*) as counter

@@ -29,11 +29,10 @@
 			<div class="span-7">
 				<g:render template="/blocks/menu-details" />
 			</div>
-			<div class="span-5">
+			<div class="span-7">
 				<g:render template="/blocks/menu-suggestions" />
 			</div>
-			<div id="about-this-app" 
-				style="height: 28px; display: table">
+			<div id="about-this-app" style="height: 28px; display: table">
 				<h4 style="display: table-cell; vertical-align: middle;">
 					<a href='http://github.com/healthonnet/HonLogAnalysis#readme'
 						target='_blank' title='About HON Log Analysis'>About</a>

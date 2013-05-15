@@ -2,7 +2,7 @@
 	<br>
 	<h2>
 		Nb. of queries:
-		${nbTotal}
+		${nbTotalBeginWithCQuery }
 	</h2>
 	<br>
 
@@ -18,16 +18,15 @@
 			</thead>
 
 			<tbody>
-				<%--			Pour trier les requêtes selon le nombre d'occurences de chacunes dans l'ordre décroissant --%>
-				<g:each in="${queryList.entrySet().sort({a,b -> b.value-a.value})}" var="query">
+				<%--			Les éléments sont contenus dans une liste  --%>
+				<g:each in="${BeginWithCQueryList}" var="query">
 					<tr>
 						<td>
-							<%--						Première colonne: affichage des clés--%> 
-							${query.key}
+							<%--						Première colonne: affichage des clés--%> ${query.term}
 						</td>
 						<td style="text-align: center">
 							<%--                      Deuxième colonne: affichage des valeurs--%>
-							${query.value}
+							${query.counter}
 						</td>
 					</tr>
 				</g:each>

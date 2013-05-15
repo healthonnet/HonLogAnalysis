@@ -11,58 +11,22 @@ import org.hon.log.analysis.search.query.Term
 import com.maxmind.geoip.Location;
 
 class SuggestionsService {
-
     static transactional = false
-
     javax.sql.DataSource dataSource;
-
-    String test() {
-        return "HELLO"
-    }
-
-    Map listByUser(options = [:]) {
-        int limit = options?.limit?:50
-
-        String query = """select sll.user_id, count(*) as counter
-                          from search_log_line sll, search_log_line_terms sllt
-                          where sll.id=sllt.search_log_line_id
-                          group by sll.user_id
-                          order by counter desc
-                          limit ?"""
-        def db = new Sql(dataSource)
-        return db.rows(query, [limit]).grep{it[0] != '-'}.collectEntries{row -> [row[0], row[1]]}
-    }
-
+    //Récupération de la requête et du nombre d'occurences de la requête
     Map listQuery(options = [:]){
-
-        //        //Récupération de la requête et du nombre d'occurences de la requête
-        //        String query= """select hon_log.search_log_line.id, hon_log.search_log_line.orig_query, hon_log.search_log_line_terms.search_log_line_id, hon_log.search_log_line_terms.term_id, count(hon_log.search_log_line_terms.term_id) as counter
-        //                         from hon_log.search_log_line,hon_log.search_log_line_terms
-        //                         where hon_log.search_log_line_terms.search_log_line_id=hon_log.search_log_line.id
-        //                           group by hon_log.search_log_line_terms.term_id
-        //                        order by counter desc"""
-        //
-        //        def db = new Sql(dataSource)
-        //        //Sélection des listes (colonnes) que l'on veut afficher
-        //        return db.rows(query).grep{it[0] != '-'}.collectEntries{row -> [row[1], row[4]]}
-
-        //requeteSQL2.sql
-        //Récupération de la requête et du nombre d'occurences de la requête
         String query= """select hon_log.search_log_line.id, hon_log.search_log_line.language, hon_log.search_log_line.orig_query, hon_log.search_log_line_terms.search_log_line_id, hon_log.search_log_line_terms.term_id, count(hon_log.search_log_line_terms.term_id) as counter
         from hon_log.search_log_line,hon_log.search_log_line_terms
         where hon_log.search_log_line_terms.search_log_line_id=hon_log.search_log_line.id
         group by hon_log.search_log_line_terms.term_id
         order by counter desc"""
-
         def db = new Sql(dataSource)
         //Sélection des listes (colonnes) que l'on veut afficher
         return db.rows(query).grep{it[0] != '-'}.collectEntries{row -> [row[2], row[5]]}
     }
 
-
+    //Récupération des requêtes en anglais
     Map listEnglishQuery(options = [:]){
-        //requeteSQL3.sql
-        //Récupération des requêtes en anglais
         String query= """select hon_log.search_log_line.language, hon_log.search_log_line.orig_query
         from hon_log.search_log_line
         where hon_log.search_log_line.language LIKE '%en%'
@@ -71,10 +35,9 @@ class SuggestionsService {
         //Sélection des listes (colonnes) que l'on veut afficher
         return db.rows(query).grep{it[0] != '-'}.collectEntries{row -> [row[1], row[2]]}
     }
-    
+
+    //Récupération des requêtes en arabe
     Map listArabicQuery(options = [:]){
-        //requeteSQL3.sql
-        //Récupération des requêtes en anglais
         String query= """select hon_log.search_log_line.language, hon_log.search_log_line.orig_query
         from hon_log.search_log_line
         where hon_log.search_log_line.language LIKE '%ar%'
@@ -82,6 +45,27 @@ class SuggestionsService {
         def db = new Sql(dataSource)
         //Sélection des listes (colonnes) que l'on veut afficher
         return db.rows(query).grep{it[0] != '-'}.collectEntries{row -> [row[1], row[2]]}
+    }
+
+    //Fonction permettant d'afficher les autosuggestions selon le input rentré par l'utilisateur
+    def listQueryBeginWithC(String queryEntry){
+        String likeStatement = "${queryEntry}%";
+        String query = """
+            select hon_log.search_log_line.id, hon_log.search_log_line.language,
+                    hon_log.search_log_line_terms.search_log_line_id, 
+                    hon_log.search_log_line_terms.term_id, hon_log.search_log_line.orig_query, 
+                    count(hon_log.search_log_line_terms.term_id) as counter
+            from hon_log.search_log_line,hon_log.search_log_line_terms
+            where hon_log.search_log_line_terms.search_log_line_id=hon_log.search_log_line.id 
+                    AND hon_log.search_log_line.orig_query LIKE ? 
+            group by hon_log.search_log_line_terms.term_id
+            order by counter desc"""
+
+        def db = new Sql(dataSource)
+        //Sélection des listes (colonnes) que l'on veut afficher
+        return  db.rows(query, likeStatement).collect{
+            [term: it[4], counter: it[5]]
+        }
     }
 }
 

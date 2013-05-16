@@ -19,15 +19,15 @@
 
 			<tbody>
 				<%--			Pour trier les requêtes selon le nombre d'occurences de chacunes dans l'ordre décroissant --%>
-				<g:each in="${queryList.entrySet().sort({a,b -> b.value-a.value})}" var="query">
+				<g:each in="${queryList}" var="query">
 					<tr>
 						<td>
 							<%--						Première colonne: affichage des clés--%> 
-							${query.key}
+							${query.term}
 						</td>
 						<td style="text-align: center">
 							<%--                      Deuxième colonne: affichage des valeurs--%>
-							${query.value}
+							${query.counter}
 						</td>
 					</tr>
 				</g:each>

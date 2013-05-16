@@ -4,7 +4,7 @@ class UrlMappings {
 		"/load"(controller:'searchLogLoader', action:'index')
 		"/statistics"(controller:'statistics', action:'countByCountry')
 		"/details"(controller:'details', action:'countQueriesPerDay')
-        "/suggestions"(controller:'suggestions', action:'listEnglishQuery')
+        "/suggestions"(controller:'suggestions', action:'listQuery')
 		"/load/$action?/$id?"(controller:'searchLogLoader')
 		"/$controller/$action?/$id?"{
 			constraints {

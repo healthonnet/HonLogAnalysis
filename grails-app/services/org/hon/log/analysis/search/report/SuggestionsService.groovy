@@ -13,57 +13,32 @@ import com.maxmind.geoip.Location;
 class SuggestionsService {
     static transactional = false
     javax.sql.DataSource dataSource;
-    //Récupération de la requête et du nombre d'occurences de la requête
-    Map listQuery(options = [:]){
-        String query= """select hon_log.search_log_line.id, hon_log.search_log_line.language, hon_log.search_log_line.orig_query, hon_log.search_log_line_terms.search_log_line_id, hon_log.search_log_line_terms.term_id, count(hon_log.search_log_line_terms.term_id) as counter
-        from hon_log.search_log_line,hon_log.search_log_line_terms
-        where hon_log.search_log_line_terms.search_log_line_id=hon_log.search_log_line.id
-        group by hon_log.search_log_line_terms.term_id
-        order by counter desc"""
-        def db = new Sql(dataSource)
-        //Sélection des listes (colonnes) que l'on veut afficher
-        return db.rows(query).grep{it[0] != '-'}.collectEntries{row -> [row[2], row[5]]}
-    }
-
-    //Récupération des requêtes en anglais
-    Map listEnglishQuery(options = [:]){
-        String query= """select hon_log.search_log_line.language, hon_log.search_log_line.orig_query
-        from hon_log.search_log_line
-        where hon_log.search_log_line.language LIKE '%en%'
-        """
-        def db = new Sql(dataSource)
-        //Sélection des listes (colonnes) que l'on veut afficher
-        return db.rows(query).grep{it[0] != '-'}.collectEntries{row -> [row[1], row[2]]}
-    }
-
-    //Récupération des requêtes en arabe
-    Map listArabicQuery(options = [:]){
-        String query= """select hon_log.search_log_line.language, hon_log.search_log_line.orig_query
-        from hon_log.search_log_line
-        where hon_log.search_log_line.language LIKE '%ar%'
-        """
-        def db = new Sql(dataSource)
-        //Sélection des listes (colonnes) que l'on veut afficher
-        return db.rows(query).grep{it[0] != '-'}.collectEntries{row -> [row[1], row[2]]}
-    }
 
     //Fonction permettant d'afficher les autosuggestions selon le input rentré par l'utilisateur
-    def listQueryBeginWithC(String queryEntry){
-        String likeStatement = "${queryEntry}%";
+    def listQuery(String queryEntry, String language){
+
+        String clauseQuery = queryEntry ? "AND search_log_line.orig_query LIKE :queryEntry" : "";
+        String clauseLang = language ? "AND search_log_line.language = :language" : "";
+
         String query = """
-            select hon_log.search_log_line.id, hon_log.search_log_line.language,
-                    hon_log.search_log_line_terms.search_log_line_id, 
-                    hon_log.search_log_line_terms.term_id, hon_log.search_log_line.orig_query, 
-                    count(hon_log.search_log_line_terms.term_id) as counter
-            from hon_log.search_log_line,hon_log.search_log_line_terms
-            where hon_log.search_log_line_terms.search_log_line_id=hon_log.search_log_line.id 
-                    AND hon_log.search_log_line.orig_query LIKE ? 
-            group by hon_log.search_log_line_terms.term_id
-            order by counter desc"""
+            select search_log_line.id, search_log_line.language,
+                    search_log_line_terms.search_log_line_id, 
+                    search_log_line_terms.term_id, search_log_line.orig_query, 
+                    count(search_log_line_terms.term_id) as counter
+            from search_log_line,search_log_line_terms
+            where search_log_line_terms.search_log_line_id=search_log_line.id
+ 
+            $clauseQuery
+            $clauseLang
+
+            group by search_log_line_terms.term_id
+            order by counter desc
+            """
 
         def db = new Sql(dataSource)
         //Sélection des listes (colonnes) que l'on veut afficher
-        return  db.rows(query, likeStatement).collect{
+        //TODO: ne codez pas en dur la limite 
+        return  db.rows(query, [queryEntry: queryEntry + "%", language: language], 0, 100).collect{
             [term: it[4], counter: it[5]]
         }
     }

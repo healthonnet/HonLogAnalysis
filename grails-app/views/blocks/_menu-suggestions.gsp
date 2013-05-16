@@ -1,19 +1,20 @@
-<g:form controller="suggestions">
-	<select class="menu" name="paction" id="suggestions-menu">
-		<option value="suggestions" selected="selected">Suggestions</option>
-		<option value="listEnglishQuery">English</option>
-		<option value="listArabicQuery">Arabic</option>
+<g:form controller="suggestions" action="index">
+	<input type="hidden" name="paction" value="listQuery">
+	<select class="menu" name="language" id="suggestions-menu">
+
+		<option ${!(params.language) ? 'selected="selected"':''}>Suggestions</option>
+		<option ${params.language=="en" ? 'selected="selected"':''} value="en">English</option>
+		<option ${params.language=="ar" ? 'selected="selected"':''} value="ar">Arabic</option>
+
 	</select>
-</g:form>
 
-<%--Pour afficher le message indiquant que la requête a été bien entrée--%>
-${flash.message}
 
-<%--Rajouter controller="suggestions" permet d'aller à la méthode "listQueryBeginWithC" depuis n'importe quelle page où on se trouve--%>
-<g:form controller="suggestions" action="listQueryBeginWithC">
+
+	<%--Rajouter controller="suggestions" permet d'aller à la méthode "listQueryBeginWithC" depuis n'importe quelle page où on se trouve--%>
 	<label>Query: </label>
-	<input type="text" name="query" />
+	<input type="text" name="query" value="${params.query}" />
 </g:form>
+
 
 
 

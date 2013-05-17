@@ -21,9 +21,9 @@ class SuggestionsService {
         String clauseLang = language ? "AND search_log_line.language = :language" : "";
 
         String query = """
-            select search_log_line.id, search_log_line.language,
+            select distinct search_log_line.orig_query, search_log_line.id, search_log_line.language,
                     search_log_line_terms.search_log_line_id, 
-                    search_log_line_terms.term_id, search_log_line.orig_query, 
+                    search_log_line_terms.term_id, 
                     count(search_log_line_terms.term_id) as counter
             from search_log_line,search_log_line_terms
             where search_log_line_terms.search_log_line_id=search_log_line.id
@@ -39,7 +39,7 @@ class SuggestionsService {
         //SŽlection des listes (colonnes) que l'on veut afficher
         //TODO: ne codez pas en dur la limite 
         return  db.rows(query, [queryEntry: queryEntry + "%", language: language], 0, 100).collect{
-            [term: it[4], counter: it[5]]
+            [term: it[0], counter: it[5]]
         }
     }
 }

@@ -15,31 +15,35 @@ class SuggestionsService {
     javax.sql.DataSource dataSource;
 
     //Fonction permettant d'afficher les autosuggestions selon le input rentré par l'utilisateur
-    def listQuery(String queryEntry, String language){
+    def listQuery(String queryEntry, String language, int limit){
 
-        String clauseQuery = queryEntry ? "AND search_log_line.orig_query LIKE :queryEntry" : "";
-        String clauseLang = language ? "AND search_log_line.language = :language" : "";
+        String clause
 
-        String query = """
-            select distinct search_log_line.orig_query, search_log_line.id, search_log_line.language,
-                    search_log_line_terms.search_log_line_id, 
-                    search_log_line_terms.term_id, 
-                    count(search_log_line_terms.term_id) as counter
-            from search_log_line,search_log_line_terms
-            where search_log_line_terms.search_log_line_id=search_log_line.id
- 
-            $clauseQuery
-            $clauseLang
+        List sqlConstraints = []
+        if (queryEntry){ sqlConstraints.add("search_log_line.orig_query LIKE :queryEntry ")
+        }
+        if (language){ sqlConstraints.add("search_log_line.language = :language")
+        }
 
-            group by search_log_line_terms.term_id
+        clause = sqlConstraints.isEmpty() ? "" : ("WHERE " + sqlConstraints.join(" AND "))
+
+        String query="""select distinct search_log_line.orig_query, search_log_line.language,
+                    count(search_log_line.orig_query) as counter
+            from search_log_line
+            
+            $clause
+            
+            group by search_log_line.orig_query
             order by counter desc
             """
-
         def db = new Sql(dataSource)
+
         //Sélection des listes (colonnes) que l'on veut afficher
-        //TODO: ne codez pas en dur la limite 
-        return  db.rows(query, [queryEntry: queryEntry + "%", language: language], 0, 100).collect{
-            [term: it[0], counter: it[5]]
+        //TODO: ne codez pas en dur la limite
+        return  db.rows(query, [queryEntry: queryEntry + "%", language: language], 0, limit).collect{
+            [term: it[0], counter: it[2]]
+
+
         }
     }
 }

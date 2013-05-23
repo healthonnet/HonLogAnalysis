@@ -21,26 +21,27 @@ class SuggestionsController  {
             def paction = params.paction
             params.remove('paction')
             if(paction != 'index')
-                redirect(action:paction, params: [query:params.query,language:params.language, display:params.display])
+                redirect(action:paction, params: [query:params.query,language:params.language, display:params.display, limit:params.limit])
         }
+    }
+
+    def listQuery2={
     }
 
     def listQuery = {
         //Dans le controleur on écrit la fonction qui permet de récupérer ce qui a été rentré dans l'interface utilisateur
-        def listQueryBeginWithCResult = suggestionsService.listQuery(params.query, params.language);
-
+        def listResult = suggestionsService.listQuery(params.query, params.language, params.limit.toInteger());
         if(params.display=="XML"){
-            //Pour avoir de l'UTF8 pour l'affichage de l'écriture arabe 
+            //Pour avoir de l'UTF8 pour l'affichage de l'écriture arabe
             response.setCharacterEncoding('UTF-8')
-            render listQueryBeginWithCResult as XML        
-        }
-        else if (params.display=="JSON"){
-            render listQueryBeginWithCResult as JSON
-        }else{
-
-            [   queryList:listQueryBeginWithCResult,
-                nbTotal:listQueryBeginWithCResult.size()
+            render listResult as XML
+        }else if (params.display=="JSON"){
+            render listResult as JSON
+        }else if (params.display=="HTML"){
+            [   queryList:listResult,
+                nbTotal:listResult.size()
             ]
         }
     }
 }
+

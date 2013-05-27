@@ -32,7 +32,6 @@
 					</tr>
 				</g:each>
 			</tbody>
-
 		</table>
 	</div>
 </g:applyLayout>

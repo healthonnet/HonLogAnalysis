@@ -52,13 +52,8 @@
 			. <a href='http://www.hon.ch/Global/privacy_policy.html'
 				target='_blank'>See our privacy policy.</a>
 		</div>
-
 	</div>
-
 	<r:require modules="core" />
 	<r:layoutResources />
-
-
-
 </body>
 </html>

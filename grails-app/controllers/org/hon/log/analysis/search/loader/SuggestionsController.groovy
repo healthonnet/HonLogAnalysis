@@ -5,6 +5,7 @@ import org.hon.log.analysis.search.SearchLogLine;
 import org.hon.log.analysis.search.report.DetailsService;
 import org.hon.log.analysis.search.report.SuggestionsService;
 import grails.converters.*
+import groovy.json.JsonSlurper
 import java.lang.Object
 import java.util.Map;
 import java.*
@@ -12,6 +13,7 @@ import org.hon.log.analysis.search.report.StatisticsService;
 import org.hon.log.analysis.search.query.Term
 
 class SuggestionsController  {
+    
     SuggestionsService  suggestionsService
 
     //Pour permettre la redirection vers la bonne page
@@ -28,11 +30,19 @@ class SuggestionsController  {
     def listQuery2={
     }
 
-    def listQuery = {
-        //Dans le controleur on écrit la fonction qui permet de récupérer ce qui a été rentré dans l'interface utilisateur
-        def listResult = suggestionsService.listQuery(params.query, params.language, params.limit.toInteger());
+    static date(){
+        def date = new Date()
+        def formattedDate = date.format('dd-MM-yyyy')
+        return formattedDate
+    }
+
+    //Fonction permettant de donner la liste des termes pr√©sents selon le mode d'affichage choisi
+    def listQuery(){   
+        if(params.q ==""){
+        def listResult = suggestionsService.listQuery(params.queryWithoutAutosuggestions, params.language, params.limit.toInteger());
+        //Choix du param√®tre d'affichage: XML, JSON ou HTML
         if(params.display=="XML"){
-            //Pour avoir de l'UTF8 pour l'affichage de l'écriture arabe
+            //Pour avoir de l'UTF8 pour l'affichage de l'√©criture arabe
             response.setCharacterEncoding('UTF-8')
             render listResult as XML
         }else if (params.display=="JSON"){
@@ -42,6 +52,53 @@ class SuggestionsController  {
                 nbTotal:listResult.size()
             ]
         }
+        }else{
+            redirection()
+            }
     }
-}
 
+    // Fonction permettant de fournir la liste des autosuggestions correspondant √† la requ√™te entr√©e dans le input
+    def listAutosuggestions(){              
+        def limit = params.limit ? params.limit.toInteger() : 4;
+        def lang = params.languageKAAHE
+        def q = params.q ?: params.query;
+        def listResult = suggestionsService.listQuery(q, lang, limit);
+        def test
+        def queryToVerify
+        def slurper = new JsonSlurper()
+        def lien
+        def resultat
+        def counterSolr
+        
+        //Proposition des requ√™tes
+        render (contentType: "text/xml") {
+            results() {
+                listResult.each { suggestion ->
+                    result(){ name(suggestion.term) }
+                }
+            }
+        };
+    }
+
+    // Fonction permettant la redirection vers le site mobile de KAAHE ou le site web de KAAHE lors de lq s√©lection d'une autosuggestions dans le input de HONLogAnalysis
+    def redirection(){
+        def site= params.site
+        def query=params.q
+        def lang = params.language
+        def lien 
+        //Cas du site web
+        if(site=="web"){
+             lien= "http://kaahe.org/cgi/search.pl?chng_search=on&searchword="+ query.encodeAsURL() +"&l="+ lang + "&task=search&option=com_search&Itemid=5&searchwordprob=" + query.encodeAsURL() + "+"
+        //Cas de la version mobile du site
+        }else if(site=="mobile"){
+             lien= "http://m.kaahe.org/fx/index_"+lang+".html"+"#"+lang+"_search.html?rl="+lang+"&search=" + query.encodeAsURL()
+        }
+        redirect(uri:lien)
+    } 
+    
+    // Fonction permettant de mettre √† jour la v√©rification de la pertinence des requ√™tes contenues dans les logs selon Solr
+    def checkQuery(){     
+        def list= suggestionsService.checkallqueries();
+    }
+
+}

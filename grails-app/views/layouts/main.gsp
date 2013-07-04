@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<%@ page
+	import="org.hon.log.analysis.search.loader.SuggestionsController"%>
 <html>
 <head>
 <title><g:layoutTitle default="HON Log Analysis" /></title>
@@ -18,40 +20,41 @@
 	<div class="span-24 contents">
 
 		<h1>HON Log Analysis</h1>
+		<center><h3> Data from <b> 22-04-2013 </b> to <b> ${SuggestionsController.date()}</b></h3></center>
+		
+			<div class="span-24">
+				<div class="span-7">
+					<g:render template="/blocks/menu-log-files" />
+				</div>
+				<div class="span-7">
+					<g:render template="/blocks/menu-statistics" />
+				</div>
+				<div class="span-7">
+					<g:render template="/blocks/menu-details" />
+				</div>
+				<div class="span-7">
+					<g:render template="/blocks/menu-suggestions" />
+				</div>
+				<div id="about-this-app" style="height: 28px; display: table">
+					<h4 style="display: table-cell; vertical-align: middle;">
+						<a href='http://github.com/healthonnet/HonLogAnalysis#readme'
+							target='_blank' title='About HON Log Analysis'>About</a>
+					</h4>
+				</div>
+			</div>
+			<div class="span-24">
+				<g:layoutBody />
+			</div>
 
-		<div class="span-24">
-			<div class="span-7">
-				<g:render template="/blocks/menu-log-files" />
+			<div class="footer span-24">
+				<a href='http://github.com/healthonnet/HonLogAnalysis'
+					target='_blank'>HON Log Analysis</a> version
+				<g:meta name="app.version" />
+				, built on <a href='http://grails.org' target='_blank'>Grails</a>
+				<g:meta name="app.grails.version" />
+				. <a href='http://www.hon.ch/Global/privacy_policy.html'
+					target='_blank'>See our privacy policy.</a>
 			</div>
-			<div class="span-7">
-				<g:render template="/blocks/menu-statistics" />
-			</div>
-			<div class="span-7">
-				<g:render template="/blocks/menu-details" />
-			</div>
-			<div class="span-7">
-				<g:render template="/blocks/menu-suggestions" />
-			</div>
-			<div id="about-this-app" style="height: 28px; display: table">
-				<h4 style="display: table-cell; vertical-align: middle;">
-					<a href='http://github.com/healthonnet/HonLogAnalysis#readme'
-						target='_blank' title='About HON Log Analysis'>About</a>
-				</h4>
-			</div>
-		</div>
-		<div class="span-24">
-			<g:layoutBody />
-		</div>
-
-		<div class="footer span-24">
-			<a href='http://github.com/healthonnet/HonLogAnalysis'
-				target='_blank'>HON Log Analysis</a> version
-			<g:meta name="app.version" />
-			, built on <a href='http://grails.org' target='_blank'>Grails</a>
-			<g:meta name="app.grails.version" />
-			. <a href='http://www.hon.ch/Global/privacy_policy.html'
-				target='_blank'>See our privacy policy.</a>
-		</div>
 	</div>
 	<r:require modules="core" />
 	<r:layoutResources />

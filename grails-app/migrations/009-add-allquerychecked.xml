@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet author="samia" id="create-allquerychecked-table">
+		<sql>
+	CREATE TABLE allquerychecked
+	(id MEDIUMINT NOT NULL AUTO_INCREMENT,
+	query VARCHAR(255) character set utf8 collate utf8_bin NOT NULL,
+	language VARCHAR(255) default 'NC',
+	occurenceLog INT default '0',
+	occurenceSolr INT default '0',
+	relevance VARCHAR(255) default 'NC',
+	PRIMARY KEY (id)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+		</sql>
+	</changeSet>
+</databaseChangeLog>

@@ -17,7 +17,7 @@ grails.project.dependency.resolution = {
         // uncomment the below to enable remote dependency resolution
         // from public Maven repositories
         //mavenLocal()
-        //mavenCentral()
+        mavenCentral()
         //mavenRepo "http://snapshots.repository.codehaus.org"
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
@@ -35,6 +35,10 @@ grails.project.dependency.resolution = {
         compile ':cache:1.0.0'
         compile ":cache-headers:1.1.5"
         compile ":quartz:1.0-RC5"
+//        compile ":grails-ui:1.2.3"
+//        compile ":yui:2.8.2.1"
+//        compile ":bubbling:2.1.4"
+        compile ":richui:0.8"
 
         build   ":tomcat:$grailsVersion"
 		

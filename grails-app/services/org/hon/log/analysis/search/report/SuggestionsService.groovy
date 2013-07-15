@@ -16,12 +16,12 @@ class SuggestionsService {
     static transactional = false
     javax.sql.DataSource dataSource;
     
-    //Fonction permettant de v�rifier les requ�tes contenues dans les logs selon Solr avant de les proposer lors de l'autocompl�tion
+    //Fonction permettant de verifier les requetes contenues dans les logs selon Solr avant de les proposer lors de l'autocompletion
     def checkallqueries(){
 		
         def initial=new Sql(dataSource)
 
-        //Remplissage de la table "allquerychecked" � partir de la table "search_log_line"
+        //Remplissage de la table "allquerychecked" a partir de la table "search_log_line"
         initial.executeUpdate("""INSERT into
         allquerychecked (query, language, occurenceLog)
         select distinct LOWER(orig_query), language, count(orig_query) as counter
@@ -35,32 +35,32 @@ class SuggestionsService {
 		
 		language.each {
 	        
-	        //R�cup�ration des requ�tes arabes
+	        //Recuperation des requetes arabes
 	        String queryArabic = """select query from allquerychecked 
 				where language='""" + it + """'"""
 	
-	        //V�rification des requ�tes
+	        //Verification des requetes
 	        
-	        //Liste contenant les requ�tes arabes distinctes contenues dans search_log_line
+	        //Liste contenant les requetes arabes distinctes contenues dans search_log_line
 	        List queryInitialArabic=db.rows(queryArabic).collect{[term: it[0]]};
-	        //Pour v�rifier le contenu de la liste
+	        //Pour verifier le contenu de la liste
 	        for (int i = 0; i <queryInitialArabic.size(); i++) {
-	            //R�cup�ration d'un terme
+	            //Recuperation d'un terme
 	            def queryToVerify = queryInitialArabic[i].term
-	            //Pour enlever les espaces avant et apr�s le mot
+	            //Pour enlever les espaces avant et apres le mot
 	            def queryToVerifyTreated = queryToVerify.trim()
-	            //Remplacement des caract�res "espace" par le caract�re "%20" (utile pour l'URL)
+	            //Remplacement des caracteres "espace" par le caractere "%20" (utile pour l'URL)
 	            queryToVerifyTreated = queryToVerifyTreated.replace(' ', '%20')
-	            //V�rification de la requ�te dans Solr
+	            //Verification de la requete dans Solr
 	            def lien= solrProxy + "?rows=0&defType=edismax&qf=text_"+ it +"%20title_"+ it +"&q=" + queryToVerifyTreated +"&wt=json"
 	            def resultat = slurper.parseText(lien.toURL().text)
-	            //R�cup�ration du nombre de pr�sence de ce terme dans KAAHE
+	            //Recuperation du nombre de presence de ce terme dans KAAHE
 	            def counterSolr= resultat.response.numFound
 	            println("query arabe a verifier: " + queryToVerify)
 	            println("compteur arabe de requete dans Solr: " + counterSolr)
-	            //Mise � jour de la valeur de l'occurence dans Solr dans la table "allquerychecked"
+	            //Mise a jour de la valeur de l'occurence dans Solr dans la table "allquerychecked"
 	            db.executeUpdate('update allquerychecked set occurenceSolr = ? where query=?', [counterSolr, queryToVerify])
-	            //Mise � jour de la valeur de la pertinence dans la table "allquerychecked"
+	            //Mise a jour de la valeur de la pertinence dans la table "allquerychecked"
 	            if(counterSolr>0){
 	                db.executeUpdate('update allquerychecked set relevance = ? where query=?', ["Yes", queryToVerify])
 	            }else{
@@ -70,7 +70,7 @@ class SuggestionsService {
 		}
     }
 
-    //Fonction permettant d'afficher les autosuggestions selon le input rentr� par l'utilisateur
+    //Fonction permettant d'afficher les autosuggestions selon le input rentre par l'utilisateur
     def listQuery(String queryEntry, String language, int limit){
         String query
         def db = new Sql(dataSource)

@@ -63,12 +63,6 @@ class SuggestionsController  {
         def lang = params.languageKAAHE
         def q = params.q ?: params.query;
         def listResult = suggestionsService.listQuery(q, lang, limit);
-        def test
-        def queryToVerify
-        def slurper = new JsonSlurper()
-        def lien
-        def resultat
-        def counterSolr
         
         //Proposition des requêtes
         render (contentType: "text/xml") {

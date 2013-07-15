@@ -16,12 +16,14 @@ class SuggestionsService {
     static transactional = false
     javax.sql.DataSource dataSource;
     
-    //Fonction permettant de vérifier les requêtes contenues dans les logs selon Solr avant de les proposer lors de l'autocomplétion
+    //Fonction permettant de vÔøΩrifier les requÔøΩtes contenues dans les logs selon Solr avant de les proposer lors de l'autocomplÔøΩtion
     def checkallqueries(){
 
+		def solrProxy = "http://www.kaahe.org/en/utils/solr-proxy.php"
+		
         def initial=new Sql(dataSource)
 
-        //Remplissage de la table "allquerychecked" à partir de la table "search_log_line"
+        //Remplissage de la table "allquerychecked" ÔøΩ partir de la table "search_log_line"
         initial.executeUpdate("""INSERT into
         allquerychecked (query, language, occurenceLog)
         select distinct LOWER(orig_query), language, count(orig_query) as counter
@@ -29,7 +31,7 @@ class SuggestionsService {
         group by orig_query""")
 
         //CAS DES REQUETES ARABES
-        //Déclarations
+        //DÔøΩclarations
         List queryInitialArabic= []
         def queryToVerify
         String queryToVerifyTreated
@@ -39,34 +41,34 @@ class SuggestionsService {
         def counterSolr
         def db
         
-        //Récupération des requêtes arabes
+        //RÔøΩcupÔøΩration des requÔøΩtes arabes
         String queryArabic="""select query
         from allquerychecked
         where language='ar'
         """
 
-        //Vérification des requêtes
+        //VÔøΩrification des requÔøΩtes
         db = new Sql(dataSource)
-        //Liste contenant les requêtes arabes distinctes contenues dans search_log_line
+        //Liste contenant les requÔøΩtes arabes distinctes contenues dans search_log_line
         queryInitialArabic=db.rows(queryArabic).collect{[term: it[0]]};
-        //Pour vérifier le contenu de la liste
+        //Pour vÔøΩrifier le contenu de la liste
         for (int i = 0; i <queryInitialArabic.size(); i++) {
-            //Récupération d'un terme
+            //RÔøΩcupÔøΩration d'un terme
             queryToVerify=queryInitialArabic[i].term
-            //Pour enlever les espaces avant et après le mot
+            //Pour enlever les espaces avant et aprÔøΩs le mot
             queryToVerifyTreated=queryToVerify.trim()
-            //Remplacement des caractères "espace" par le caractère "%20" (utile pour l'URL)
+            //Remplacement des caractÔøΩres "espace" par le caractÔøΩre "%20" (utile pour l'URL)
             queryToVerifyTreated=queryToVerifyTreated.replace(' ', '%20')
-            //Vérification de la requête dans Solr
-            lien= "http://services.hon.ch:7010/solr/select/?rows=0&defType=edismax&qf=text_ar%20title_ar&q=" + queryToVerifyTreated +"&wt=json"
+            //VÔøΩrification de la requÔøΩte dans Solr
+            lien= solrProxy + "?rows=0&defType=edismax&qf=text_ar%20title_ar&q=" + queryToVerifyTreated +"&wt=json"
             resultat = slurper.parseText(lien.toURL().text)
-            //Récupération du nombre de présence de ce terme dans KAAHE
+            //RÔøΩcupÔøΩration du nombre de prÔøΩsence de ce terme dans KAAHE
             counterSolr= resultat.response.numFound
             println("query arabe a verifier: " + queryToVerify)
             println("compteur arabe de requete dans Solr: " + counterSolr)
-            //Mise à jour de la valeur de l'occurence dans Solr dans la table "allquerychecked"
+            //Mise ÔøΩ jour de la valeur de l'occurence dans Solr dans la table "allquerychecked"
             db.executeUpdate('update allquerychecked set occurenceSolr = ? where query=?', [counterSolr, queryToVerify])
-            //Mise à jour de la valeur de la pertinence dans la table "allquerychecked"
+            //Mise ÔøΩ jour de la valeur de la pertinence dans la table "allquerychecked"
             if(counterSolr>0){
                 db.executeUpdate('update allquerychecked set relevance = ? where query=?', ["Yes", queryToVerify])
             }else{
@@ -75,7 +77,7 @@ class SuggestionsService {
         }
 
         //CAS DES REQUETES ANGLAISES       
-        //Déclarations
+        //DÔøΩclarations
         List queryInitialEnglish= []
         def queryToVerify1
         String queryToVerifyTreated1
@@ -85,33 +87,33 @@ class SuggestionsService {
         def counterSolr1
         def db1
         
-        //Récupération des requêtes anglaises
+        //RÔøΩcupÔøΩration des requÔøΩtes anglaises
         String queryEnglish="""select query
         from allquerychecked
         where language='en'
         """
-        //Vérification des requêtes
+        //VÔøΩrification des requÔøΩtes
         db1 = new Sql(dataSource)
-        //Liste contenant les requêtes arabes distinctes contenues dans search_log_line
+        //Liste contenant les requÔøΩtes arabes distinctes contenues dans search_log_line
         queryInitialEnglish=db1.rows(queryEnglish).collect{[term: it[0]]};
-        //Pour vérifier le contenu de la liste
+        //Pour vÔøΩrifier le contenu de la liste
         for (int j = 0; j <queryInitialEnglish.size(); j++) {
-            //Récupération d'un terme
+            //RÔøΩcupÔøΩration d'un terme
             queryToVerify1=queryInitialEnglish[j].term
-            //Pour enlever les espaces avant et après le mot
+            //Pour enlever les espaces avant et aprÔøΩs le mot
             queryToVerifyTreated1=queryToVerify1.trim()
-            //Remplacement des caractères "espace" par le caractère "%20" (utile pour l'URL)
+            //Remplacement des caractÔøΩres "espace" par le caractÔøΩre "%20" (utile pour l'URL)
             queryToVerifyTreated1=queryToVerifyTreated1.replace(' ', '%20')
-            //Vérification de la requête dans Solr
-            lien1= "http://services.hon.ch:7010/solr/select/?rows=0&defType=edismax&qf=text_en%20title_en&q=" + queryToVerifyTreated1 +"&wt=json"
+            //VÔøΩrification de la requÔøΩte dans Solr
+            lien1= solrProxy + "?rows=0&defType=edismax&qf=text_en%20title_en&q=" + queryToVerifyTreated1 +"&wt=json"
             resultat1 = slurper1.parseText(lien1.toURL().text)
-            //Récupération du nombre de présence de ce terme dans KAAHE
+            //RÔøΩcupÔøΩration du nombre de prÔøΩsence de ce terme dans KAAHE
             counterSolr1= resultat1.response.numFound
             println("query anglaise a verifier: " + queryToVerify1)
             println("compteur anglaise de requete dans Solr: " + counterSolr1)
-            //Mise à jour de la valeur de l'occurence dans Solr dans la table "allquerychecked"
+            //Mise ÔøΩ jour de la valeur de l'occurence dans Solr dans la table "allquerychecked"
             db1.executeUpdate('update allquerychecked set occurenceSolr = ? where query=?', [counterSolr1, queryToVerify1])
-            //Mise à jour de la valeur de la pertinence dans la table "allquerychecked"
+            //Mise ÔøΩ jour de la valeur de la pertinence dans la table "allquerychecked"
             if(counterSolr1>0){
                 db1.executeUpdate('update allquerychecked set relevance = ? where query=?', ["Yes", queryToVerify1])
             }else{
@@ -120,7 +122,7 @@ class SuggestionsService {
         }
     }
 
-    //Fonction permettant d'afficher les autosuggestions selon le input rentré par l'utilisateur
+    //Fonction permettant d'afficher les autosuggestions selon le input rentrÔøΩ par l'utilisateur
     def listQuery(String queryEntry, String language, int limit){
         String query
         def db = new Sql(dataSource)

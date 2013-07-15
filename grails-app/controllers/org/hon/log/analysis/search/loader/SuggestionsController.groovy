@@ -63,15 +63,19 @@ class SuggestionsController  {
         def lang = params.languageKAAHE
         def q = params.q ?: params.query;
         def listResult = suggestionsService.listQuery(q, lang, limit);
-        
-        //Proposition des requêtes
-        render (contentType: "text/xml") {
-            results() {
-                listResult.each { suggestion ->
-                    result(){ name(suggestion.term) }
-                }
-            }
-        };
+		
+		if ( params.wt == "json" ){
+			render listResult as JSON
+		} else {
+	        //Proposition des requêtes
+	        render (contentType: "text/xml") {
+	            results() {
+	                listResult.each { suggestion ->
+	                    result(){ name(suggestion.term) }
+	                }
+	            }
+	        };
+		}
     }
 
     // Fonction permettant la redirection vers le site mobile de KAAHE ou le site web de KAAHE lors de lq sélection d'une autosuggestions dans le input de HONLogAnalysis

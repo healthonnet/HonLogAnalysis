@@ -73,18 +73,19 @@ class SuggestionsServiceIntegrationTests extends GroovyTestCase {
 //        assert counterSolr == 447
         
         //Test pour les requêtes anglaises
+		def solrProxy = "http://www.kaahe.org/en/utils/solr-proxy.php"
         def slurper1 = new JsonSlurper()
         def lien1
         def resultat1
         def counterSolr1
         
-        lien1= "http://services.hon.ch:7010/solr/select/?rows=0&defType=edismax&qf=text_en%20title_en&q=nose&wt=json"
+        lien1= solrProxy + "?rows=0&defType=edismax&qf=text_en%20title_en&q=nose&wt=json"
         resultat1 = slurper1.parseText(lien1.toURL().text)
         //Récupération du nombre de présence de ce terme dans KAAHE
         counterSolr1= resultat1.response.numFound
 
         //Test pour la requête "nose"
-        assert counterSolr1 == 133
+        assert counterSolr1 == 132
        
     }       
 }

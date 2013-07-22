@@ -37,13 +37,22 @@ h1 {
     text-align: center;
     color : #5ba0fe;
     font-size : 4em;
-    padding-bottom: 0.25em;
-    border-bottom: 1px solid #5ba0fe;
+    margin-bottom : 0.25em;    
+}
+
+hr {
+  border-bottom: 1px solid #5ba0fe;	
 }
 
 h2 {
     padding-left: 1em;
     padding-top: 1em;
+}
+
+h3 {
+	text-align: center;
+	color : #5ba0fe;
+	padding-bottom: 0.25em;
 }
 
 a, a:visited {
@@ -67,4 +76,8 @@ a:hover {
 .iframe {
     border:1px solid #ddd;
     margin:20px auto;
+}
+
+.black-text {
+	color : black;
 }

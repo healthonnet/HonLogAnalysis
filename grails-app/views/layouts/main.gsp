@@ -20,7 +20,16 @@
 	<div class="span-24 contents">
 
 		<h1>HON Log Analysis</h1>
-		<center><h3> Data from <b> 22-04-2013 </b> to <b> ${SuggestionsController.date()}</b></h3></center>
+		
+		<g:if test="${grailsApplication.config.honlogDefault.filter}">
+      <h3 class="center">${grailsApplication.config.honlogDefault.filter}</h3>
+		</g:if>
+		
+		<hr />
+		
+		<center>
+		  <h3 class="black-text"> Data from <b> 22-04-2013 </b> to <b> ${SuggestionsController.date()}</b></h3>
+		</center>
 		
 			<div class="span-24">
 				<div class="span-7">

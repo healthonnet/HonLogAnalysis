@@ -44,8 +44,11 @@ class URLUtil {
                 if (host) {
 
                     try {
-                        InternetDomainName domainName = InternetDomainName.fromLenient(host)
-                        return domainName.topPrivateDomain().name()
+                        InternetDomainName domainName = InternetDomainName.from(host)
+						try {
+							String domain = domainName.topPrivateDomain().name()
+							return domain
+						} catch (IllegalStateException ignore) {} // localhost
                     } catch (IllegalArgumentException ignore) {}// invalid domain, such as 129.195.254.166
                 }
 

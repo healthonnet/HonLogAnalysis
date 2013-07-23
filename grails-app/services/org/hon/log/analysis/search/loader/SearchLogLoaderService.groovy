@@ -114,7 +114,7 @@ class SearchLogLoaderService implements InitializingBean{
 			// if we don't manually clear the session, we end up with a memory leak where
 			// each document takes long and longer until the JVM finally crashes
 		    // see discussion here: http://naleid.com/blog/2009/10/01/batch-import-performance-with-grails-and-mysql/
-			//sessionFactory.currentSession.flush()
+			sessionFactory.currentSession.flush()
 			sessionFactory.currentSession.clear()
 			propertyInstanceMap.get().clear();
 	}

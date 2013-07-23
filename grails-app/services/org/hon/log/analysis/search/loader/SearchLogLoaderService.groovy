@@ -87,9 +87,17 @@ class SearchLogLoaderService implements InitializingBean{
 				sll.loadedFile = loadedFile;
 				loadedFile.addToSearchLogLines(sll)
 				sll = sll.save(failOnError: true);
+				
+				// with the engine honSearch we need to clean each time otherwise 
+				// hibernate do not create many-to-many relation
+				// similar problem here
+				// http://www.17od.com/2006/11/09/problem-with-hibernate-many-to-many-association/	
+				sessionFactory.currentSession.flush()
+				
 				if (++n % BATCH_SIZE == 0) {
 					cleanUpGorm();
 				}
+
 			}catch(Exception e){
 				log.error("Cannot parse $line", e)
 				throw new RuntimeException(e);
@@ -106,7 +114,7 @@ class SearchLogLoaderService implements InitializingBean{
 			// if we don't manually clear the session, we end up with a memory leak where
 			// each document takes long and longer until the JVM finally crashes
 		    // see discussion here: http://naleid.com/blog/2009/10/01/batch-import-performance-with-grails-and-mysql/
-			sessionFactory.currentSession.flush()
+			//sessionFactory.currentSession.flush()
 			sessionFactory.currentSession.clear()
 			propertyInstanceMap.get().clear();
 	}

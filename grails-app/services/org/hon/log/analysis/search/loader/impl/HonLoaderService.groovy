@@ -67,7 +67,7 @@ class HonLoaderService extends SearchLogLineLoaderAbst{
 	}
 	
 	Map parseQuery(String q, String engine){
-		q = findUrlDecodedIfRegexMatches(patternQuery, q, engine);
+		q = findUrlDecodedIfRegexMatches(patternQuery, q, engine) ?: '';
 		return [terms:q.split(/[\s,:;]+/).sort()]
 	}
 	

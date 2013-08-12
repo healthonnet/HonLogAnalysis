@@ -35,15 +35,12 @@ grails.project.dependency.resolution = {
         compile ':cache:1.0.0'
         compile ":cache-headers:1.1.5"
         compile ":quartz:1.0-RC5"
-//        compile ":grails-ui:1.2.3"
-//        compile ":yui:2.8.2.1"
-//        compile ":bubbling:2.1.4"
         compile ":richui:0.8"
 
         build   ":tomcat:$grailsVersion"
 		
-        runtime   ":hibernate:$grailsVersion"
-		runtime   ":database-migration:1.2"
+        runtime ":hibernate:$grailsVersion"
+		runtime ":database-migration:1.2"
 		
         runtime ':blueprint:1.0.2'
         runtime ':blueprint-jquery-ui:0.2.0'

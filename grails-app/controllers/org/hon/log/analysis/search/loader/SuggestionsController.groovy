@@ -30,12 +30,6 @@ class SuggestionsController  {
     def listQuery2={
     }
 
-    static date(){
-        def date = new Date()
-        def formattedDate = date.format('dd-MM-yyyy')
-        return formattedDate
-    }
-
     //Fonction permettant de donner la liste des termes présents selon le mode d'affichage choisi
     def listQuery(){   
         if(params.q ==""){

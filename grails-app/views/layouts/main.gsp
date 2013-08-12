@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<%@ page
-	import="org.hon.log.analysis.search.loader.SuggestionsController"%>
+<%
+    def statisticsService = grailsApplication.mainContext.getBean("statisticsService");
+%>
 <html>
 <head>
 <title><g:layoutTitle default="HON Log Analysis" /></title>
@@ -26,10 +27,11 @@
 		</g:if>
 		
 		<hr />
-		
-		<center>
-		  <h3 class="black-text"> Data from <b> 22-04-2013 </b> to <b> ${SuggestionsController.date()}</b></h3>
-		</center>
+
+		  <h3 class="black-text" style="text-align:center;"> Data from
+              <strong> ${statisticsService.getLeastRecentDate().format('dd MMM yyyy')} </strong> to
+              <strong> ${statisticsService.getMostRecentDate().format('dd MMM yyyy')}</strong>
+          </h3>
 		
 			<div class="span-24">
 				<div class="span-7">

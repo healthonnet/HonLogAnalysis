@@ -81,7 +81,7 @@ class SearchLogLoaderService implements InitializingBean{
 					return;
 				}
 				SearchLogLine sll=service.parseLine(line)
-				if(sll.origQuery.length() > MAX_QUERY_SIZE){
+				if(!sll.origQuery || sll.origQuery.length() == 0 || sll.origQuery.length() > MAX_QUERY_SIZE){
 					return
 				}
 				sll.loadedFile = loadedFile;

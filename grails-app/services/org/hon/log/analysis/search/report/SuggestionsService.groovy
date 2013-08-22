@@ -30,7 +30,7 @@ class SuggestionsService {
 
 		def slurper   = new JsonSlurper()
 		def db        = new Sql(dataSource)
-		def solrProxy = "http://www.kaahe.org/en/utils/solr-proxy.php"
+		def solrProxy = "http://www.kaahe.org/en/utils/solr-proxy-dev.php"
 		def language  = ['en', 'ar']
 
 		language.each {

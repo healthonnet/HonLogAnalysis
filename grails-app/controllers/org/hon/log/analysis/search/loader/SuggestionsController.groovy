@@ -53,7 +53,7 @@ class SuggestionsController  {
 
     // Fonction permettant de fournir la liste des autosuggestions correspondant à la requête entrée dans le input
     def listAutosuggestions(){              
-        def limit = params.limit ? params.limit.toInteger() : 4;
+        def limit = params.limit ? params.limit.toInteger() : 5;
         def lang = params.languageKAAHE
         def q = params.q ?: params.query;
         def listResult = suggestionsService.listQuery(q, lang, limit);

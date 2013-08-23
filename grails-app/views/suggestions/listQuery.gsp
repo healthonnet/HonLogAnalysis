@@ -22,7 +22,8 @@
 				<g:each in="${queryList}" var="query">
 					<tr>
 						<td>
-							<%--						Première colonne: affichage des clés--%> ${query.term}
+							<%--						Première colonne: affichage des clés--%> 
+							${query.term}
 						</td>
 						<td style="text-align: center">
 							<%--                      Deuxième colonne: affichage des valeurs--%>

@@ -65,7 +65,9 @@ class SuggestionsController  {
 	        render (contentType: "text/xml") {
 	            results() {
 	                listResult.each { suggestion ->
-	                    result(){ name(suggestion.term) }
+	                    result(){ name(suggestion.term)
+                            name(suggestion.counter)
+                        }
 	                }
 	            }
 	        };

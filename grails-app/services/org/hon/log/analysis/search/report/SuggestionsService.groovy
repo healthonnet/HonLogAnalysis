@@ -79,7 +79,7 @@ class SuggestionsService {
             order by allquerychecked.occurenceLog desc
             """
 		return  db.rows(query, [queryEntry: queryEntry + "%", language: language], 0, limit).collect{
-			[term: it[0]]}
+			[term: it[0], counter: it[1]]}
 
 	}
 }

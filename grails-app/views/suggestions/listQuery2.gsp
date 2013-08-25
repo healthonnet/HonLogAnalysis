@@ -52,7 +52,7 @@
 
 			<div class="span-20">
 		      <h4>_____________________________</h4>
-		      <h3>Search with autosuggestions and redirection toward KAAHE Mobile: </h3>
+		      <h3>Search with autosuggestions and redirection toward KAAHE: </h3>
 		    </div>
 		    		   			
             <div class="span-10">

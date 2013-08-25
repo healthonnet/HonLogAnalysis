@@ -60,6 +60,8 @@ class SuggestionsController  {
 		
 		if ( params.wt == "json" ){
 			render listResult as JSON
+		} else if ( params.wt == "xml" ){
+            render listResult as XML
 		} else {
 	        //Proposition des requêtes
 	        render (contentType: "text/xml") {

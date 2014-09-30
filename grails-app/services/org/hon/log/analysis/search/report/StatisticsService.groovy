@@ -15,15 +15,15 @@ class StatisticsService {
 	
 	javax.sql.DataSource dataSource;
 
-    Date getMostRecentDate() {
-        def db = new Sql(dataSource);
-        return new Date(db.rows("select max(date) from search_log_line;")[0][0]?.getTime() ?: 0L)
-    }
+	long getMostRecentDate() {
+		def db = new Sql(dataSource);
+		return db.rows("select max(date) from search_log_line;")[0][0]?.getTime() ?: 0L
+	}
 
-    Date getLeastRecentDate() {
-        def db = new Sql(dataSource);
-        return new Date(db.rows("select min(date) from search_log_line;")[0][0]?.getTime() ?: 0L)
-    }
+	long getLeastRecentDate() {
+		def db = new Sql(dataSource);
+		return db.rows("select min(date) from search_log_line;")[0][0]?.getTime() ?: 0L
+	}
 
 	/**
 	 * 

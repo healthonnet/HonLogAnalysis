@@ -1,7 +1,6 @@
 package org.hon.log.analysis.search.loader.impl
 
 import grails.test.*
-import grails.test.mixin.*
 
 import java.text.SimpleDateFormat
 

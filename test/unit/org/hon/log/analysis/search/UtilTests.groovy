@@ -1,7 +1,6 @@
 package org.hon.log.analysis.search
 
 import org.hon.log.analysis.search.util.StringUtil
-import org.junit.*
 
 /**
  * See the API for {@link grails.test.mixin.domain.DomainClassUnitTestMixin} for usage instructions

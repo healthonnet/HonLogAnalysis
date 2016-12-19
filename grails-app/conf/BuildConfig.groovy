@@ -22,6 +22,8 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenRepo "http://repo.grails.org/grails/core"
+        mavenRepo "http://repo.grails.org/grails/plugins"
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
@@ -29,7 +31,7 @@ grails.project.dependency.resolution = {
         runtime 'mysql:mysql-connector-java:5.1.13'
         runtime "com.google.guava:guava:13.0.1"
     }
-    
+
     plugins {
 
         compile ':cache:1.0.0'
@@ -38,16 +40,16 @@ grails.project.dependency.resolution = {
         compile ":richui:0.8"
 
         build   ":tomcat:$grailsVersion"
-		
+
         runtime ":hibernate:$grailsVersion"
-		runtime ":database-migration:1.2"
-		
+        runtime ":database-migration:1.2"
+
         runtime ':blueprint:1.0.2'
         runtime ':blueprint-jquery-ui:0.2.0'
         runtime ':dynamic-jasper:0.6'
         runtime ':geoip:0.2'
         runtime ':google-visualization:0.6.1'
-        
+
         runtime ':jasper:1.6.1'
         runtime ':jquery:1.6.1.1'
         runtime ':jquery-file-upload:0.2'

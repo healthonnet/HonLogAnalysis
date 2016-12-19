@@ -5,7 +5,7 @@ import java.text.DateFormat;
 
 class LoadedFile {
 		String filename
-		Date loadedAt = createDate()
+		Date loadedAt = getDateNow()
 		static hasMany = [searchLogLines:SearchLogLine]
 		int size(){
 			searchLogLines?.size()?:0
@@ -24,10 +24,7 @@ class LoadedFile {
 				joinTable:false // why the hell would we need a join table for a 1-to-many mapping?
 	}
 
-	Date createDate() {
-		log.info(new Date())
-		String target = "Mon Dec 19 17:31:30 UTC 2016";
-		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss zzz yyyy");
-		return df.parse(target);
+	Date getDateNow() {
+		return Calendar.getInstance().getTime();
 	}
 }

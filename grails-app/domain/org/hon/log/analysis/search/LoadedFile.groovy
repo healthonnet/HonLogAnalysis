@@ -1,23 +1,33 @@
 package org.hon.log.analysis.search
 
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+
 class LoadedFile {
 		String filename
-		Date loadedAt = new Date()
+		Date loadedAt = createDate()
 		static hasMany = [searchLogLines:SearchLogLine]
 		int size(){
 			searchLogLines?.size()?:0
 		}
-    
-    static constraints = {
-    }
-	
+
+		static constraints = {
+		}
+
 	// disable hibernate optimistic locking - it forces a constant update of the 'version' field, which is costly
 	// plus, there's only one thread that reads from the db at once
 	static mapping = {
 		version false
-		
-		
+
+
 		searchLogLines column : "loaded_file_id",
-		        joinTable:false // why the hell would we need a join table for a 1-to-many mapping?
+				joinTable:false // why the hell would we need a join table for a 1-to-many mapping?
+	}
+
+	Date createDate() {
+		log.info(new Date())
+		String target = "Mon Dec 19 17:31:30 UTC 2016";
+		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss zzz yyyy");
+		return df.parse(target);
 	}
 }

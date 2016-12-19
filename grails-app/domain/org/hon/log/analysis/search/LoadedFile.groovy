@@ -24,7 +24,12 @@ class LoadedFile {
 				joinTable:false // why the hell would we need a join table for a 1-to-many mapping?
 	}
 
+	// hack to fix com.mysql.jdbc.MysqlDataTruncation: Data truncation:
+	// Incorrect datetime value
 	Date getDateNow() {
-		return Calendar.getInstance().getTime();
+		Date date = Calendar.getInstance().getTime()
+		String target = date.toString()
+		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss zzz yyyy")
+		return df.parse(target)
 	}
 }
